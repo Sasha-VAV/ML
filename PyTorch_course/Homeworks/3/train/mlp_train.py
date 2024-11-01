@@ -10,10 +10,10 @@ ys = [1.0, -1.0, -1.0, 1.0] # desired targets
 
 n = MLP(3, [4, 4, 1])
 acc = 0
-total_loss = 0
 for k in range(200):
     n_right_answ = 0
     b = []
+    total_loss = 0
     for i in range(len(xs)):
         n.zero_grad()
         # forward

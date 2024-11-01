@@ -1,4 +1,6 @@
 import random
+import numpy as np
+import math
 
 
 class Value:
@@ -54,6 +56,31 @@ class Value:
         out._backward = _backward
 
         return out
+
+    def softmax(self, other_values):
+        input = other_values.append(self.data)
+        input.sort()
+        ii = input.index(self.data)
+        sum_j_k = sum(math.exp(input[j]) for j in range(len(input)))
+        probability = np.array([math.exp(input[i]) / sum_j_k for i in range(len(input))])
+        out = Value(probability[ii], (self,), 'softmax')
+
+        def _backward():
+            delta = 1e-3
+            new_input = tuple(input[i] + delta for i in range(len(input)))
+            new_sum_j_k = sum(math.exp(new_input[i]) for i in range(len(input)))
+            new_probability = np.array([math.exp(new_input[i]) / new_sum_j_k for i in range(len(input))])
+            res = list((new_probability[i] - probability[i]) / delta for i in range(len(input)))
+            for i in range(len(input)):
+                if i==ii:
+                    self.grad += res[i] * out.grad
+                else:
+                    other_values[i].grad += res[i] * out.grad
+
+
+        out._backward = _backward
+        return out
+
 
     def backward(self):
 
