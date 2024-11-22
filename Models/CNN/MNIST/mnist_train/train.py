@@ -1,10 +1,9 @@
 import torch
-
-from model import cnn
-from data import train_data_loader, test_data_loader
 import torch.nn as nn
 import torch.optim as optim
 
+from mnist_data import train_data_loader
+from mnist_model import cnn
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 criterion = nn.CrossEntropyLoss()
@@ -18,7 +17,7 @@ def main():
     for epoch in range(20):  # loop over the dataset multiple times
         running_loss = 0.0
         for i, data in enumerate(train_data_loader, 0):
-            # get the inputs; data is a list of [inputs, labels]
+            # get the inputs; mnist_data is a list of [inputs, labels]
             inputs, labels = data
             inputs, labels = inputs.to(device), labels.to(device)
             # zero the parameter gradients

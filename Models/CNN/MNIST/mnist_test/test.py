@@ -1,7 +1,7 @@
 import torch
-from model import cnn
+from mnist_model import cnn
 import torch.nn as nn
-from data import test_data_loader
+from mnist_data import test_data_loader
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 criterion = nn.CrossEntropyLoss()
