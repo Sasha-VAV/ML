@@ -1,0 +1,60 @@
+Traceback (most recent call last):
+  File "D:\Backup\Less Important\My programs\Git\ML\Models\CNN\dogs_vs_cats\main.py", line 48, in <module>
+    train_model(
+  File "D:\Backup\Less Important\My programs\Git\ML\Models\CNN\dogs_vs_cats\train\train.py", line 39, in train_model
+    for i, data in enumerate(train_data_loader, 0):
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\utils\data\dataloader.py", line 631, in __next__
+    data = self._next_data()
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\utils\data\dataloader.py", line 675, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\utils\data\_utils\fetch.py", line 51, in fetch
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\utils\data\_utils\fetch.py", line 51, in <listcomp>
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torchvision\datasets\folder.py", line 247, in __getitem__
+    sample = self.transform(sample)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torchvision\transforms\transforms.py", line 95, in __call__
+    img = t(img)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\nn\modules\module.py", line 1532, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\nn\modules\module.py", line 1541, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torchvision\transforms\transforms.py", line 354, in forward
+    return F.resize(img, self.size, self.interpolation, self.max_size, self.antialias)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torchvision\transforms\functional.py", line 468, in resize
+    return F_pil.resize(img, size=output_size, interpolation=pil_interpolation)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torchvision\transforms\_functional_pil.py", line 250, in resize
+    return img.resize(tuple(size[::-1]), interpolation)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\PIL\Image.py", line 2365, in resize
+    return self._new(self.im.resize(size, resample, box))
+KeyboardInterrupt
+Traceback (most recent call last):
+  File "D:\Backup\Less Important\My programs\Git\ML\Models\CNN\dogs_vs_cats\main.py", line 48, in <module>
+    train_model(
+  File "D:\Backup\Less Important\My programs\Git\ML\Models\CNN\dogs_vs_cats\train\train.py", line 39, in train_model
+    for i, data in enumerate(train_data_loader, 0):
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\utils\data\dataloader.py", line 631, in __next__
+    data = self._next_data()
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\utils\data\dataloader.py", line 675, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\utils\data\_utils\fetch.py", line 51, in fetch
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\utils\data\_utils\fetch.py", line 51, in <listcomp>
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torchvision\datasets\folder.py", line 247, in __getitem__
+    sample = self.transform(sample)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torchvision\transforms\transforms.py", line 95, in __call__
+    img = t(img)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\nn\modules\module.py", line 1532, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\nn\modules\module.py", line 1541, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torchvision\transforms\transforms.py", line 354, in forward
+    return F.resize(img, self.size, self.interpolation, self.max_size, self.antialias)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torchvision\transforms\functional.py", line 468, in resize
+    return F_pil.resize(img, size=output_size, interpolation=pil_interpolation)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torchvision\transforms\_functional_pil.py", line 250, in resize
+    return img.resize(tuple(size[::-1]), interpolation)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\PIL\Image.py", line 2365, in resize
+    return self._new(self.im.resize(size, resample, box))
+KeyboardInterrupt

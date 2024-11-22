@@ -1,0 +1,12 @@
+{"time":"2024-11-23T01:43:04.0926103+03:00","level":"INFO","msg":"using version","core version":"0.18.7"}
+{"time":"2024-11-23T01:43:04.0926103+03:00","level":"INFO","msg":"created symlink","path":"D:\\Backup\\Less Important\\My programs\\Git\\ML\\Models\\CNN\\dogs_vs_cats\\wandb\\run-20241123_014304-983j6hrd\\logs\\debug-core.log"}
+{"time":"2024-11-23T01:43:04.2088634+03:00","level":"INFO","msg":"created new stream","id":"983j6hrd"}
+{"time":"2024-11-23T01:43:04.2088634+03:00","level":"INFO","msg":"stream: started","id":"983j6hrd"}
+{"time":"2024-11-23T01:43:04.2088634+03:00","level":"INFO","msg":"handler: started","stream_id":"983j6hrd"}
+{"time":"2024-11-23T01:43:04.2088634+03:00","level":"INFO","msg":"sender: started","stream_id":"983j6hrd"}
+{"time":"2024-11-23T01:43:04.2088634+03:00","level":"INFO","msg":"writer: Do: started","stream_id":"983j6hrd"}
+{"time":"2024-11-23T01:43:04.5899164+03:00","level":"INFO","msg":"Starting system monitor"}
+{"time":"2024-11-23T01:43:14.5906347+03:00","level":"ERROR","msg":"monitor: disk: error sampling metrics: Incorrect function."}
+{"time":"2024-11-23T01:45:37.8484907+03:00","level":"INFO","msg":"stream: closing","id":"983j6hrd"}
+{"time":"2024-11-23T01:45:37.8484907+03:00","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2024-11-23T01:45:37.8489962+03:00","level":"INFO","msg":"Stopped system monitor"}

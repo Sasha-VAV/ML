@@ -4,6 +4,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
 from dvc_model import CNN
+import wandb
 
 
 def train_model(
@@ -33,8 +34,8 @@ def train_model(
 
     for epoch in range(epochs):  # loop over the dataset multiple times
         running_loss = 0.0
-        print_every_n = 100
-        num_of_samples = 200
+        total_loss = 0.0
+        print_every_n = 1000
         for i, data in enumerate(train_data_loader, 0):
             # get the inputs; dvc_data is a list of [inputs, labels]
             inputs, labels = data
@@ -50,13 +51,13 @@ def train_model(
 
             # print statistics
             running_loss += loss.item()
-            if i % print_every_n == print_every_n - 1:  # print every 2000 mini-batches
+            total_loss += loss.item()
+            if i % print_every_n == print_every_n - 1:  # print every n mini-batches
                 print(
                     f"[{epoch + 1}, {i + 1:5d}] loss: {running_loss / print_every_n:.3f}"
                 )
                 running_loss = 0.0
                 torch.save(cnn.state_dict(), path_to_cnn_params)
-            if i >= num_of_samples:
-                break
+        wandb.log({"loss": total_loss / 6000})
 
     print("Finished Training")
