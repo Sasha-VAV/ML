@@ -1,0 +1,10 @@
+C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\PIL\TiffImagePlugin.py:935: UserWarning: Truncated File Read
+  warnings.warn(str(msg))
+23996 dvc_test samples. Accuracy: 94.54492415402567
+Now let's see your photos
+Predicted:  c a t
+Tensor: tensor([[ 2.2364, -2.5158]], grad_fn=<AddmmBackward0>)
+Predicted:  c a t
+Tensor: tensor([[-0.0164, -0.3545]], grad_fn=<AddmmBackward0>)
+Predicted:  d o g
+Tensor: tensor([[-4.2564,  4.4541]], grad_fn=<AddmmBackward0>)

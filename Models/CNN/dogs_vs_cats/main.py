@@ -7,6 +7,8 @@ from dvc_data import load_data
 from train import train_model
 from dvc_test import test_model
 import wandb
+from PIL import Image
+from torchvision.transforms import transforms
 
 """
 PUT YOUR CONSTANTS HERE
@@ -27,6 +29,13 @@ epochs = 20
 path_to_test_data = (
     "D:\\Backup\\Less Important\\My programs\\Git\\Dog_vs_Cats_neural_network_2.0\\Test"
 )
+
+# Predict an answer
+list_of_images_paths = [
+    "img/cat1.jpg",
+    "img/dog1.jpg",
+    "img/dog2.jpg"
+]
 
 # WANDB
 # Comment, if you do not want to use it
@@ -60,3 +69,42 @@ test_model(
     test_data_loader=test_data_loader,
     path_to_cnn_params=path_to_cnn_params,
 )
+
+if list_of_images_paths is None:
+    exit(0)
+
+print("Now let's see your photos")
+for s in list_of_images_paths:
+    def load_image(path: str):
+        transform = transforms.Compose(
+            [
+                transforms.Resize(34),  # Optional: Resize the image
+                transforms.CenterCrop(32),  # Optional: Center crop the image
+                transforms.ToTensor(),
+                transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]),
+            ]
+        )
+
+        # Load the image
+        img = Image.open(path)
+
+        # Apply the transform to the image
+        img_tensor = transform(img)
+
+        # Add a batch dimension (since the model expects a batch of images)
+        img_tensor = img_tensor.unsqueeze(0)
+
+        return img_tensor
+
+
+    classes = (
+        "cat",
+        "dog"
+    )
+    img_tensor = load_image(s)
+    img_tensor = img_tensor.to(device=device)
+    output = cnn(img_tensor)
+    _, predicted = torch.max(output, 1)
+
+    print("Predicted: ", " ".join(f"{classes[predicted]:5s}"))
+    print(f"Tensor: {output}")

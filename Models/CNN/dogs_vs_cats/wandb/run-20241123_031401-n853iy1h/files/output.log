@@ -1,0 +1,7 @@
+Now let's see your photos
+Predicted:  d o g
+Tensor: tensor([[-0.0975,  0.0401]], grad_fn=<AddmmBackward0>)
+Predicted:  d o g
+Tensor: tensor([[-0.0848,  0.0286]], grad_fn=<AddmmBackward0>)
+Predicted:  d o g
+Tensor: tensor([[-0.0875,  0.0358]], grad_fn=<AddmmBackward0>)

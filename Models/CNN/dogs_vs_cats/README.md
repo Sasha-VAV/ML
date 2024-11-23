@@ -9,4 +9,4 @@
 ### Test set size: 1000 images
 ### Accuracy: 73.5
 ### Number of learned epochs: 20
-![img.png](img.png)
+![img_1.png](img_1.png)
