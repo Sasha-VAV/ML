@@ -9,14 +9,14 @@ def test_model(
     device: torch.device,
     test_data_loader: DataLoader,
     path_to_cnn_params: str,
-):
+) -> float:
     """
     Function to dvc_test the dvc_model
     :param cnn: object of CNN class that will be used to dvc_test the dvc_model
     :param device: torch device can be either cpu or cuda
     :param test_data_loader: object of DataLoader that represents the dvc_test dvc_data
     :param path_to_cnn_params: path to parameters of the CNN dvc_model
-    :return: nothing
+    :return: accuracy of the model in percent
     """
     if test_data_loader is None:
         return
@@ -34,3 +34,4 @@ def test_model(
         correct += (predicted == labels).sum().item()
 
     print(f"{total} dvc_test samples. Accuracy: {correct * 100 / total}")
+    return correct * 100 / total

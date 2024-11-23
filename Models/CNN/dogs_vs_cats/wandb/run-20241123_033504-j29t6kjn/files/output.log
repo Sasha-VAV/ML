@@ -1,0 +1,63 @@
+[1,  1000] loss: 0.089
+[1,  2000] loss: 0.103
+[1,  3000] loss: 0.124
+[1,  4000] loss: 0.153
+[1,  5000] loss: 0.135
+C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\PIL\TiffImagePlugin.py:935: UserWarning: Truncated File Read
+  warnings.warn(str(msg))
+[1,  6000] loss: 0.161
+[2,  1000] loss: 0.090
+[2,  2000] loss: 0.093
+[2,  3000] loss: 0.120
+[2,  4000] loss: 0.119
+[2,  5000] loss: 0.128
+[2,  6000] loss: 0.129
+[3,  1000] loss: 0.071
+Traceback (most recent call last):
+  File "D:\Backup\Less Important\My programs\Git\ML\Models\CNN\dogs_vs_cats\main.py", line 63, in <module>
+    train_model(
+  File "D:\Backup\Less Important\My programs\Git\ML\Models\CNN\dogs_vs_cats\train\train.py", line 42, in train_model
+    for i, data in enumerate(train_data_loader, 0):
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\utils\data\dataloader.py", line 631, in __next__
+    data = self._next_data()
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\utils\data\dataloader.py", line 675, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\utils\data\_utils\fetch.py", line 51, in fetch
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\utils\data\_utils\fetch.py", line 51, in <listcomp>
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torchvision\datasets\folder.py", line 245, in __getitem__
+    sample = self.loader(path)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torchvision\datasets\folder.py", line 284, in default_loader
+    return pil_loader(path)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torchvision\datasets\folder.py", line 264, in pil_loader
+    return img.convert("RGB")
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\PIL\Image.py", line 993, in convert
+    self.load()
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\PIL\ImageFile.py", line 300, in load
+    n, err_code = decoder.decode(b)
+KeyboardInterrupt
+Traceback (most recent call last):
+  File "D:\Backup\Less Important\My programs\Git\ML\Models\CNN\dogs_vs_cats\main.py", line 63, in <module>
+    train_model(
+  File "D:\Backup\Less Important\My programs\Git\ML\Models\CNN\dogs_vs_cats\train\train.py", line 42, in train_model
+    for i, data in enumerate(train_data_loader, 0):
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\utils\data\dataloader.py", line 631, in __next__
+    data = self._next_data()
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\utils\data\dataloader.py", line 675, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\utils\data\_utils\fetch.py", line 51, in fetch
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\utils\data\_utils\fetch.py", line 51, in <listcomp>
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torchvision\datasets\folder.py", line 245, in __getitem__
+    sample = self.loader(path)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torchvision\datasets\folder.py", line 284, in default_loader
+    return pil_loader(path)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torchvision\datasets\folder.py", line 264, in pil_loader
+    return img.convert("RGB")
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\PIL\Image.py", line 993, in convert
+    self.load()
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\PIL\ImageFile.py", line 300, in load
+    n, err_code = decoder.decode(b)
+KeyboardInterrupt

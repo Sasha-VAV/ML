@@ -5,6 +5,7 @@ import torch.optim as optim
 from torch.utils.data import DataLoader
 from dvc_model import CNN
 import wandb
+from dvc_test import test_model
 
 
 def train_model(
@@ -13,12 +14,14 @@ def train_model(
     train_data_loader: DataLoader,
     path_to_cnn_params: str,
     epochs: int = 10,
+    test_data_loader: DataLoader | None = None
 ):
     """
     Function to train the CNN dvc_model
     :param cnn: object of class CNN that represents the CNN dvc_model
     :param device: torch device, can be either cpu or cuda
     :param train_data_loader: object of DataLoader that represents the training dvc_data
+    :param test_data_loader: object of DataLoader that represents the testing dvc_data
     :param path_to_cnn_params: path to parameters of the CNN dvc_model
     :param epochs: number of epochs to train the CNN dvc_model
     :return: nothing
@@ -58,6 +61,10 @@ def train_model(
                 )
                 running_loss = 0.0
                 torch.save(cnn.state_dict(), path_to_cnn_params)
-        wandb.log({"loss": total_loss / 6000})
+        if test_data_loader is not None:
+            accuracy = test_model(cnn, device, test_data_loader, path_to_cnn_params)
+            wandb.log({"loss": total_loss / 6000, "accuracy": accuracy})
+        else:
+            wandb.log({"loss": total_loss / 6000})
 
     print("Finished Training")

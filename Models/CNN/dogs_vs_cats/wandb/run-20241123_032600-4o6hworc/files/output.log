@@ -1,0 +1,17 @@
+Now let's see your photos
+Predicted:  c a t
+Tensor: tensor([[0.0977, 0.0249]], grad_fn=<AddmmBackward0>)
+Predicted:  c a t
+Tensor: tensor([[0.0953, 0.0337]], grad_fn=<AddmmBackward0>)
+Predicted:  c a t
+Tensor: tensor([[0.0968, 0.0239]], grad_fn=<AddmmBackward0>)
+Predicted:  c a t
+Tensor: tensor([[0.0886, 0.0219]], grad_fn=<AddmmBackward0>)
+Predicted:  c a t
+Tensor: tensor([[0.0876, 0.0354]], grad_fn=<AddmmBackward0>)
+Predicted:  c a t
+Tensor: tensor([[0.0922, 0.0277]], grad_fn=<AddmmBackward0>)
+Predicted:  c a t
+Tensor: tensor([[0.0842, 0.0342]], grad_fn=<AddmmBackward0>)
+Predicted:  c a t
+Tensor: tensor([[0.0816, 0.0217]], grad_fn=<AddmmBackward0>)

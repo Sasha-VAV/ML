@@ -1,0 +1,16 @@
+{"time":"2024-11-23T03:26:22.8987959+03:00","level":"INFO","msg":"using version","core version":"0.18.7"}
+{"time":"2024-11-23T03:26:22.8987959+03:00","level":"INFO","msg":"created symlink","path":"D:\\Backup\\Less Important\\My programs\\Git\\ML\\Models\\CNN\\dogs_vs_cats\\wandb\\run-20241123_032622-snl6c3w1\\logs\\debug-core.log"}
+{"time":"2024-11-23T03:26:23.0135176+03:00","level":"INFO","msg":"created new stream","id":"snl6c3w1"}
+{"time":"2024-11-23T03:26:23.0135176+03:00","level":"INFO","msg":"stream: started","id":"snl6c3w1"}
+{"time":"2024-11-23T03:26:23.0135176+03:00","level":"INFO","msg":"handler: started","stream_id":"snl6c3w1"}
+{"time":"2024-11-23T03:26:23.0135176+03:00","level":"INFO","msg":"sender: started","stream_id":"snl6c3w1"}
+{"time":"2024-11-23T03:26:23.0135176+03:00","level":"INFO","msg":"writer: Do: started","stream_id":"snl6c3w1"}
+{"time":"2024-11-23T03:26:23.3284451+03:00","level":"INFO","msg":"Starting system monitor"}
+{"time":"2024-11-23T03:26:24.0628548+03:00","level":"INFO","msg":"stream: closing","id":"snl6c3w1"}
+{"time":"2024-11-23T03:26:24.0628548+03:00","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2024-11-23T03:26:24.0633572+03:00","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2024-11-23T03:26:25.5358651+03:00","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2024-11-23T03:26:25.7632012+03:00","level":"INFO","msg":"handler: closed","stream_id":"snl6c3w1"}
+{"time":"2024-11-23T03:26:25.7632012+03:00","level":"INFO","msg":"sender: closed","stream_id":"snl6c3w1"}
+{"time":"2024-11-23T03:26:25.7632012+03:00","level":"INFO","msg":"writer: Close: closed","stream_id":"snl6c3w1"}
+{"time":"2024-11-23T03:26:25.7637058+03:00","level":"INFO","msg":"stream: closed","id":"snl6c3w1"}

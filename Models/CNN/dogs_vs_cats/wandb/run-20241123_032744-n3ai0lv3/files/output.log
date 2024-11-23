@@ -1,0 +1,80 @@
+[1,  1000] loss: 0.121
+C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\PIL\TiffImagePlugin.py:935: UserWarning: Truncated File Read
+  warnings.warn(str(msg))
+[1,  2000] loss: 0.117
+[1,  3000] loss: 0.153
+[1,  4000] loss: 0.160
+[1,  5000] loss: 0.142
+[1,  6000] loss: 0.171
+[2,  1000] loss: 0.091
+[2,  2000] loss: 0.095
+[2,  3000] loss: 0.136
+[2,  4000] loss: 0.164
+Traceback (most recent call last):
+  File "D:\Backup\Less Important\My programs\Git\ML\Models\CNN\dogs_vs_cats\main.py", line 63, in <module>
+    train_model(
+  File "D:\Backup\Less Important\My programs\Git\ML\Models\CNN\dogs_vs_cats\train\train.py", line 39, in train_model
+    for i, data in enumerate(train_data_loader, 0):
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\utils\data\dataloader.py", line 631, in __next__
+    data = self._next_data()
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\utils\data\dataloader.py", line 675, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\utils\data\_utils\fetch.py", line 51, in fetch
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\utils\data\_utils\fetch.py", line 51, in <listcomp>
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torchvision\datasets\folder.py", line 245, in __getitem__
+    sample = self.loader(path)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torchvision\datasets\folder.py", line 284, in default_loader
+    return pil_loader(path)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torchvision\datasets\folder.py", line 263, in pil_loader
+    img = Image.open(f)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\PIL\Image.py", line 3515, in open
+    im = _open_core(fp, filename, prefix, formats)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\PIL\Image.py", line 3503, in _open_core
+    im = factory(fp, filename)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\PIL\JpegImagePlugin.py", line 863, in jpeg_factory
+    im = JpegImageFile(fp, filename)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\PIL\ImageFile.py", line 144, in __init__
+    self._open()
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\PIL\JpegImagePlugin.py", line 370, in _open
+    handler(self, i)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\PIL\JpegImagePlugin.py", line 73, in APP
+    s = ImageFile._safe_read(self.fp, n)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\PIL\ImageFile.py", line 611, in _safe_read
+    if size <= 0:
+KeyboardInterrupt
+Traceback (most recent call last):
+  File "D:\Backup\Less Important\My programs\Git\ML\Models\CNN\dogs_vs_cats\main.py", line 63, in <module>
+    train_model(
+  File "D:\Backup\Less Important\My programs\Git\ML\Models\CNN\dogs_vs_cats\train\train.py", line 39, in train_model
+    for i, data in enumerate(train_data_loader, 0):
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\utils\data\dataloader.py", line 631, in __next__
+    data = self._next_data()
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\utils\data\dataloader.py", line 675, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\utils\data\_utils\fetch.py", line 51, in fetch
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\utils\data\_utils\fetch.py", line 51, in <listcomp>
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torchvision\datasets\folder.py", line 245, in __getitem__
+    sample = self.loader(path)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torchvision\datasets\folder.py", line 284, in default_loader
+    return pil_loader(path)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torchvision\datasets\folder.py", line 263, in pil_loader
+    img = Image.open(f)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\PIL\Image.py", line 3515, in open
+    im = _open_core(fp, filename, prefix, formats)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\PIL\Image.py", line 3503, in _open_core
+    im = factory(fp, filename)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\PIL\JpegImagePlugin.py", line 863, in jpeg_factory
+    im = JpegImageFile(fp, filename)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\PIL\ImageFile.py", line 144, in __init__
+    self._open()
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\PIL\JpegImagePlugin.py", line 370, in _open
+    handler(self, i)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\PIL\JpegImagePlugin.py", line 73, in APP
+    s = ImageFile._safe_read(self.fp, n)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\PIL\ImageFile.py", line 611, in _safe_read
+    if size <= 0:
+KeyboardInterrupt

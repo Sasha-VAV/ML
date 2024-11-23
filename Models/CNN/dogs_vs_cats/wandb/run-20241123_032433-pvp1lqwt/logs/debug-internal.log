@@ -1,0 +1,16 @@
+{"time":"2024-11-23T03:24:33.2940336+03:00","level":"INFO","msg":"using version","core version":"0.18.7"}
+{"time":"2024-11-23T03:24:33.2940336+03:00","level":"INFO","msg":"created symlink","path":"D:\\Backup\\Less Important\\My programs\\Git\\ML\\Models\\CNN\\dogs_vs_cats\\wandb\\run-20241123_032433-pvp1lqwt\\logs\\debug-core.log"}
+{"time":"2024-11-23T03:24:33.4099994+03:00","level":"INFO","msg":"created new stream","id":"pvp1lqwt"}
+{"time":"2024-11-23T03:24:33.4099994+03:00","level":"INFO","msg":"stream: started","id":"pvp1lqwt"}
+{"time":"2024-11-23T03:24:33.4099994+03:00","level":"INFO","msg":"handler: started","stream_id":"pvp1lqwt"}
+{"time":"2024-11-23T03:24:33.4099994+03:00","level":"INFO","msg":"writer: Do: started","stream_id":"pvp1lqwt"}
+{"time":"2024-11-23T03:24:33.4099994+03:00","level":"INFO","msg":"sender: started","stream_id":"pvp1lqwt"}
+{"time":"2024-11-23T03:24:33.7551899+03:00","level":"INFO","msg":"Starting system monitor"}
+{"time":"2024-11-23T03:24:34.3335113+03:00","level":"INFO","msg":"stream: closing","id":"pvp1lqwt"}
+{"time":"2024-11-23T03:24:34.3335113+03:00","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2024-11-23T03:24:34.3345156+03:00","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2024-11-23T03:24:35.6830512+03:00","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2024-11-23T03:24:35.9253424+03:00","level":"INFO","msg":"handler: closed","stream_id":"pvp1lqwt"}
+{"time":"2024-11-23T03:24:35.9253424+03:00","level":"INFO","msg":"writer: Close: closed","stream_id":"pvp1lqwt"}
+{"time":"2024-11-23T03:24:35.9253424+03:00","level":"INFO","msg":"sender: closed","stream_id":"pvp1lqwt"}
+{"time":"2024-11-23T03:24:35.9253424+03:00","level":"INFO","msg":"stream: closed","id":"pvp1lqwt"}

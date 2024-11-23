@@ -23,7 +23,7 @@ path_to_cnn_params = "cnn.pth"
 # For example, path_to_train_data = None
 path_to_train_data = "D:\\Backup\\Less Important\\My programs\\Git\\Dog_vs_Cats_neural_network_2.0\\Train"
 train_batch_size = 4  # Number of samples per train batch
-epochs = 20
+epochs = 200
 
 # TEST
 path_to_test_data = (
@@ -34,7 +34,12 @@ path_to_test_data = (
 list_of_images_paths = [
     "img/cat1.jpg",
     "img/dog1.jpg",
-    "img/dog2.jpg"
+    "img/dog2.jpg",
+    "img/corgi.jpg",
+    "img/corgi1.jpg",
+    "img/cat2.jpg",
+    "img/cat3.jpg",
+    "img/samoed.jpg"
 ]
 
 # WANDB
@@ -61,13 +66,14 @@ train_model(
     train_data_loader=train_data_loader,
     path_to_cnn_params=path_to_cnn_params,
     epochs=epochs,
+    test_data_loader=test_data_loader
 )
 
 test_model(
     cnn=cnn,
     device=device,
     test_data_loader=test_data_loader,
-    path_to_cnn_params=path_to_cnn_params,
+    path_to_cnn_params=path_to_cnn_params
 )
 
 if list_of_images_paths is None:

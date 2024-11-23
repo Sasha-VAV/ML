@@ -1,0 +1,41 @@
+[1,  1000] loss: 0.093
+Traceback (most recent call last):
+  File "D:\Backup\Less Important\My programs\Git\ML\Models\CNN\dogs_vs_cats\main.py", line 64, in <module>
+    train_model(
+  File "D:\Backup\Less Important\My programs\Git\ML\Models\CNN\dogs_vs_cats\train\train.py", line 42, in train_model
+    for i, data in enumerate(train_data_loader, 0):
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\utils\data\dataloader.py", line 631, in __next__
+    data = self._next_data()
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\utils\data\dataloader.py", line 675, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\utils\data\_utils\fetch.py", line 51, in fetch
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\utils\data\_utils\fetch.py", line 51, in <listcomp>
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torchvision\datasets\folder.py", line 245, in __getitem__
+    sample = self.loader(path)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torchvision\datasets\folder.py", line 284, in default_loader
+    return pil_loader(path)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torchvision\datasets\folder.py", line 262, in pil_loader
+    with open(path, "rb") as f:
+KeyboardInterrupt
+Traceback (most recent call last):
+  File "D:\Backup\Less Important\My programs\Git\ML\Models\CNN\dogs_vs_cats\main.py", line 64, in <module>
+    train_model(
+  File "D:\Backup\Less Important\My programs\Git\ML\Models\CNN\dogs_vs_cats\train\train.py", line 42, in train_model
+    for i, data in enumerate(train_data_loader, 0):
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\utils\data\dataloader.py", line 631, in __next__
+    data = self._next_data()
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\utils\data\dataloader.py", line 675, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\utils\data\_utils\fetch.py", line 51, in fetch
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\utils\data\_utils\fetch.py", line 51, in <listcomp>
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torchvision\datasets\folder.py", line 245, in __getitem__
+    sample = self.loader(path)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torchvision\datasets\folder.py", line 284, in default_loader
+    return pil_loader(path)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torchvision\datasets\folder.py", line 262, in pil_loader
+    with open(path, "rb") as f:
+KeyboardInterrupt
