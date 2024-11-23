@@ -39,7 +39,7 @@ list_of_images_paths = [
     "img/corgi1.jpg",
     "img/cat2.jpg",
     "img/cat3.jpg",
-    "img/samoed.jpg"
+    "img/samoed.jpg",
 ]
 
 # WANDB
@@ -66,14 +66,14 @@ train_model(
     train_data_loader=train_data_loader,
     path_to_cnn_params=path_to_cnn_params,
     epochs=epochs,
-    test_data_loader=test_data_loader
+    test_data_loader=test_data_loader,
 )
 
 test_model(
     cnn=cnn,
     device=device,
     test_data_loader=test_data_loader,
-    path_to_cnn_params=path_to_cnn_params
+    path_to_cnn_params=path_to_cnn_params,
 )
 
 if list_of_images_paths is None:
@@ -81,6 +81,7 @@ if list_of_images_paths is None:
 
 print("Now let's see your photos")
 for s in list_of_images_paths:
+
     def load_image(path: str):
         transform = transforms.Compose(
             [
@@ -102,11 +103,7 @@ for s in list_of_images_paths:
 
         return img_tensor
 
-
-    classes = (
-        "cat",
-        "dog"
-    )
+    classes = ("cat", "dog")
     img_tensor = load_image(s)
     img_tensor = img_tensor.to(device=device)
     output = cnn(img_tensor)

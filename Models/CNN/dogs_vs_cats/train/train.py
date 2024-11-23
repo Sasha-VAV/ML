@@ -14,7 +14,7 @@ def train_model(
     train_data_loader: DataLoader,
     path_to_cnn_params: str,
     epochs: int = 10,
-    test_data_loader: DataLoader | None = None
+    test_data_loader: DataLoader | None = None,
 ):
     """
     Function to train the CNN dvc_model
