@@ -11,9 +11,9 @@ def load_data(
 ) -> tuple[DataLoader, DataLoader]:
     """
     Function to load the training and testing dvc_data
-    :param path_to_train_data: string path to train dvc_data
+    :param path_to_train_data: string path to dvc_train dvc_data
     :param path_to_test_data: string path to dvc_test dvc_data
-    :param train_batch_size: number of samples per train batch
+    :param train_batch_size: number of samples per dvc_train batch
     :param test_batch_size: number of samples per dvc_test batch
     :return: tuple[DataLoader, DataLoader]
     """
