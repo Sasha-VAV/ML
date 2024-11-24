@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "D:\Backup\Less Important\My programs\Git\ML\Models\CNN\dogs_vs_cats\main.py", line 48, in <module>
+    train_model(
+  File "D:\Backup\Less Important\My programs\Git\ML\Models\CNN\dogs_vs_cats\train\train.py", line 38, in train_model
+    num_of_samples = 24000
+KeyboardInterrupt

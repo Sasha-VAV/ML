@@ -1,0 +1,16 @@
+{"time":"2024-11-23T03:13:04.8855544+03:00","level":"INFO","msg":"using version","core version":"0.18.7"}
+{"time":"2024-11-23T03:13:04.8855544+03:00","level":"INFO","msg":"created symlink","path":"D:\\Backup\\Less Important\\My programs\\Git\\ML\\Models\\CNN\\dogs_vs_cats\\wandb\\run-20241123_031304-oay4sms4\\logs\\debug-core.log"}
+{"time":"2024-11-23T03:13:05.0003345+03:00","level":"INFO","msg":"created new stream","id":"oay4sms4"}
+{"time":"2024-11-23T03:13:05.0003345+03:00","level":"INFO","msg":"stream: started","id":"oay4sms4"}
+{"time":"2024-11-23T03:13:05.0003345+03:00","level":"INFO","msg":"handler: started","stream_id":"oay4sms4"}
+{"time":"2024-11-23T03:13:05.0003345+03:00","level":"INFO","msg":"sender: started","stream_id":"oay4sms4"}
+{"time":"2024-11-23T03:13:05.0003345+03:00","level":"INFO","msg":"writer: Do: started","stream_id":"oay4sms4"}
+{"time":"2024-11-23T03:13:05.3341502+03:00","level":"INFO","msg":"Starting system monitor"}
+{"time":"2024-11-23T03:13:05.8913082+03:00","level":"INFO","msg":"stream: closing","id":"oay4sms4"}
+{"time":"2024-11-23T03:13:05.8913082+03:00","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2024-11-23T03:13:05.8918338+03:00","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2024-11-23T03:13:07.9654487+03:00","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2024-11-23T03:13:08.2495209+03:00","level":"INFO","msg":"handler: closed","stream_id":"oay4sms4"}
+{"time":"2024-11-23T03:13:08.2495209+03:00","level":"INFO","msg":"writer: Close: closed","stream_id":"oay4sms4"}
+{"time":"2024-11-23T03:13:08.2495209+03:00","level":"INFO","msg":"sender: closed","stream_id":"oay4sms4"}
+{"time":"2024-11-23T03:13:08.2495209+03:00","level":"INFO","msg":"stream: closed","id":"oay4sms4"}

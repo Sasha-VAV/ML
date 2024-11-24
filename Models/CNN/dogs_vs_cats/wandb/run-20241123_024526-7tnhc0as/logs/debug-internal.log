@@ -1,0 +1,17 @@
+{"time":"2024-11-23T02:45:26.3948548+03:00","level":"INFO","msg":"using version","core version":"0.18.7"}
+{"time":"2024-11-23T02:45:26.3948548+03:00","level":"INFO","msg":"created symlink","path":"D:\\Backup\\Less Important\\My programs\\Git\\ML\\Models\\CNN\\dogs_vs_cats\\wandb\\run-20241123_024526-7tnhc0as\\logs\\debug-core.log"}
+{"time":"2024-11-23T02:45:26.5099597+03:00","level":"INFO","msg":"created new stream","id":"7tnhc0as"}
+{"time":"2024-11-23T02:45:26.5099597+03:00","level":"INFO","msg":"stream: started","id":"7tnhc0as"}
+{"time":"2024-11-23T02:45:26.5099597+03:00","level":"INFO","msg":"writer: Do: started","stream_id":"7tnhc0as"}
+{"time":"2024-11-23T02:45:26.5099597+03:00","level":"INFO","msg":"sender: started","stream_id":"7tnhc0as"}
+{"time":"2024-11-23T02:45:26.5099597+03:00","level":"INFO","msg":"handler: started","stream_id":"7tnhc0as"}
+{"time":"2024-11-23T02:45:26.8660146+03:00","level":"INFO","msg":"Starting system monitor"}
+{"time":"2024-11-23T02:45:36.8661009+03:00","level":"ERROR","msg":"monitor: disk: error sampling metrics: Incorrect function."}
+{"time":"2024-11-23T03:05:50.7971019+03:00","level":"INFO","msg":"stream: closing","id":"7tnhc0as"}
+{"time":"2024-11-23T03:05:50.7971019+03:00","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2024-11-23T03:05:50.798817+03:00","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2024-11-23T03:05:54.1358185+03:00","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2024-11-23T03:05:54.3895314+03:00","level":"INFO","msg":"handler: closed","stream_id":"7tnhc0as"}
+{"time":"2024-11-23T03:05:54.3895314+03:00","level":"INFO","msg":"sender: closed","stream_id":"7tnhc0as"}
+{"time":"2024-11-23T03:05:54.3895314+03:00","level":"INFO","msg":"writer: Close: closed","stream_id":"7tnhc0as"}
+{"time":"2024-11-23T03:05:54.3895314+03:00","level":"INFO","msg":"stream: closed","id":"7tnhc0as"}

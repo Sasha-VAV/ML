@@ -1,0 +1,8 @@
+1000 dvc_test samples. Accuracy: 71.2
+Now let's see your photos
+Predicted:  c a t
+Tensor: tensor([[ 2.2364, -2.5158]], grad_fn=<AddmmBackward0>)
+Predicted:  c a t
+Tensor: tensor([[-0.0164, -0.3545]], grad_fn=<AddmmBackward0>)
+Predicted:  d o g
+Tensor: tensor([[-4.2564,  4.4541]], grad_fn=<AddmmBackward0>)

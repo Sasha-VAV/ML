@@ -1,0 +1,18 @@
+{"time":"2024-11-23T23:44:26.6263895+03:00","level":"INFO","msg":"using version","core version":"0.18.7"}
+{"time":"2024-11-23T23:44:26.6263895+03:00","level":"INFO","msg":"created symlink","path":"D:\\Backup\\Less Important\\My programs\\Git\\ML\\Models\\CNN\\dogs_vs_cats\\wandb\\run-20241123_234426-52fqdm9o\\logs\\debug-core.log"}
+{"time":"2024-11-23T23:44:26.7413922+03:00","level":"INFO","msg":"created new stream","id":"52fqdm9o"}
+{"time":"2024-11-23T23:44:26.7413922+03:00","level":"INFO","msg":"stream: started","id":"52fqdm9o"}
+{"time":"2024-11-23T23:44:26.7413922+03:00","level":"INFO","msg":"writer: Do: started","stream_id":"52fqdm9o"}
+{"time":"2024-11-23T23:44:26.7413922+03:00","level":"INFO","msg":"sender: started","stream_id":"52fqdm9o"}
+{"time":"2024-11-23T23:44:26.7413922+03:00","level":"INFO","msg":"handler: started","stream_id":"52fqdm9o"}
+{"time":"2024-11-23T23:44:27.1071058+03:00","level":"INFO","msg":"Starting system monitor"}
+{"time":"2024-11-23T23:44:37.1078756+03:00","level":"ERROR","msg":"monitor: disk: error sampling metrics: Incorrect function."}
+{"time":"2024-11-24T07:42:17.9630512+03:00","level":"INFO","msg":"api: retrying HTTP error","status":500,"url":"https://api.wandb.ai/files/vav/dogs_vs_cats/52fqdm9o/file_stream"}
+{"time":"2024-11-24T11:25:41.9585746+03:00","level":"INFO","msg":"stream: closing","id":"52fqdm9o"}
+{"time":"2024-11-24T11:25:41.9585746+03:00","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2024-11-24T11:25:41.9597525+03:00","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2024-11-24T11:25:43.2915892+03:00","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2024-11-24T11:25:43.5596288+03:00","level":"INFO","msg":"handler: closed","stream_id":"52fqdm9o"}
+{"time":"2024-11-24T11:25:43.5596288+03:00","level":"INFO","msg":"writer: Close: closed","stream_id":"52fqdm9o"}
+{"time":"2024-11-24T11:25:43.5596288+03:00","level":"INFO","msg":"sender: closed","stream_id":"52fqdm9o"}
+{"time":"2024-11-24T11:25:43.5596288+03:00","level":"INFO","msg":"stream: closed","id":"52fqdm9o"}
