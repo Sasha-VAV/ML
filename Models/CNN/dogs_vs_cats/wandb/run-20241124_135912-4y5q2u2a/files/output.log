@@ -1,0 +1,5 @@
+Now let's see your photos
+Traceback (most recent call last):
+  File "D:\Backup\Less Important\My programs\Git\ML\Models\CNN\dogs_vs_cats\main.py", line 124, in <module>
+    print("Predicted: ", " ".join(f"{classes[predicted]:5s}"))
+IndexError: tuple index out of range
