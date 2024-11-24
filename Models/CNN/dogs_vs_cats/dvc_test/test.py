@@ -19,7 +19,7 @@ def test_model(
     :return: accuracy of the model in percent
     """
     if test_data_loader is None:
-        return
+        return -1
 
     cnn.load_state_dict(torch.load(path_to_cnn_params, weights_only=True))
 

@@ -17,13 +17,13 @@ def train_model(
     test_data_loader: DataLoader | None = None,
 ):
     """
-    Function to train the CNN dvc_model
+    Function to dvc_train the CNN dvc_model
     :param cnn: object of class CNN that represents the CNN dvc_model
     :param device: torch device, can be either cpu or cuda
     :param train_data_loader: object of DataLoader that represents the training dvc_data
     :param test_data_loader: object of DataLoader that represents the testing dvc_data
     :param path_to_cnn_params: path to parameters of the CNN dvc_model
-    :param epochs: number of epochs to train the CNN dvc_model
+    :param epochs: number of epochs to dvc_train the CNN dvc_model
     :return: nothing
     """
     if train_data_loader is None:
