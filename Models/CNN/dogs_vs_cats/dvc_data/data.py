@@ -19,8 +19,8 @@ def load_data(
     """
     data_transform = transforms.Compose(
         [
-            transforms.Resize(34),
-            transforms.CenterCrop(32),
+            transforms.Resize(224),
+            transforms.CenterCrop(224),
             transforms.ToTensor(),
             transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
         ]

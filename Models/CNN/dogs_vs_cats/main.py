@@ -1,6 +1,7 @@
 """
 Main class to work with CNN
 """
+
 import torch
 from dvc_model import CNN
 from dvc_data import load_data
@@ -85,8 +86,8 @@ for s in list_of_images_paths:
     def load_image(path: str):
         transform = transforms.Compose(
             [
-                transforms.Resize(34),  # Optional: Resize the image
-                transforms.CenterCrop(32),  # Optional: Center crop the image
+                transforms.Resize(224),  # Optional: Resize the image
+                transforms.CenterCrop(224),  # Optional: Center crop the image
                 transforms.ToTensor(),
                 transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]),
             ]
@@ -110,4 +111,4 @@ for s in list_of_images_paths:
     _, predicted = torch.max(output, 1)
 
     print("Predicted: ", " ".join(f"{classes[predicted]:5s}"))
-    print(f"Tensor: {output}")
+    # print(f"Tensor: {output}")
