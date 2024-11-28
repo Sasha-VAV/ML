@@ -6,6 +6,7 @@ from torch.utils.data import DataLoader
 from dvc_model import CNN
 import wandb
 from dvc_test import test_model
+from dvc_data import load_data
 
 
 def train_model(
@@ -15,15 +16,21 @@ def train_model(
     path_to_cnn_params: str,
     epochs: int = 10,
     test_data_loader: DataLoader | None = None,
+    is_use_wandb: bool = False,
+    refresh_train_data: bool = False,
+    path_to_train_data: str | None = None,
 ):
     """
-    Function to dvc_train the CNN dvc_model
-    :param cnn: object of class CNN that represents the CNN dvc_model
+    Function to train the CNN model
+    :param cnn: object of class CNN that represents the CNN model
     :param device: torch device, can be either cpu or cuda
-    :param train_data_loader: object of DataLoader that represents the training dvc_data
-    :param test_data_loader: object of DataLoader that represents the testing dvc_data
-    :param path_to_cnn_params: path to parameters of the CNN dvc_model
-    :param epochs: number of epochs to dvc_train the CNN dvc_model
+    :param train_data_loader: object of DataLoader that represents the training data
+    :param test_data_loader: object of DataLoader that represents the testing data
+    :param path_to_cnn_params: path to parameters of the CNN model
+    :param epochs: number of epochs to dvc_train the CNN model
+    :param is_use_wandb: whether to use wandb instead or not
+    :param refresh_train_data: whether to refresh the training data or not
+    :param path_to_train_data: path to training data
     :return: nothing
     """
     if train_data_loader is None:
@@ -63,8 +70,12 @@ def train_model(
                 torch.save(cnn.state_dict(), path_to_cnn_params)
         if test_data_loader is not None:
             accuracy = test_model(cnn, device, test_data_loader, path_to_cnn_params)
-            wandb.log({"loss": total_loss / 6000, "accuracy": accuracy})
+            if is_use_wandb:
+                wandb.log({"loss": total_loss / 6000, "accuracy": accuracy})
         else:
-            wandb.log({"loss": total_loss / 6000})
+            if is_use_wandb:
+                wandb.log({"loss": total_loss / 6000})
+        if refresh_train_data:
+            train_data_loader, _ = load_data(path_to_train_data=path_to_train_data)
 
     print("Finished Training")

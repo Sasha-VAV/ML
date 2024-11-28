@@ -1,1 +1,5 @@
 cnn.pth
+pretrained_configs
+ILSVRC2012_devkit_t12.tar.gz
+ILSVRC2012_devkit_t3.tar.gz
+data
