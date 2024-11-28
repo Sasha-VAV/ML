@@ -16,26 +16,24 @@ import torchvision
 PUT YOUR CONSTANTS HERE
 """
 # Params
-path_to_cnn_params = "pretrained_configs/cnn.pth"
+path_to_cnn_params = "pretrained_configs/alexnet_dvc_aug_95.6.pth"
 
 # TRAIN
 # You should replace path_to_train_data with the folder that contains dogs and cats
 # Get it here https://www.kaggle.com/c/dogs-vs-cats/data
 # Leave None, if you do not want to train/test
 # For example, path_to_train_data = None
-path_to_train_data = "D:\\Backup\\Less Important\\My programs\\Git\\Dog_vs_Cats_neural_network_2.0\\Train"
+path_to_train_data = "D:\\Backup\\Less Important\\My programs\\Git\\Dog_vs_Cats_neural_network_2.0\\T1rain"
 train_batch_size = 4  # Number of samples per dvc_train batch
 epochs = 80
 
 # WANDB
 # Replace with True if you do want to use wandb
 # Also check wandb_init method
-is_use_wandb = True
+is_use_wandb = False
 
 # TEST
-path_to_test_data = (
-    "D:\\Backup\\Less Important\\My programs\\Git\\Dog_vs_Cats_neural_network_2.0\\Test"
-)
+path_to_test_data = "D:\\Backup\\Less Important\\My programs\\Git\\Dog_vs_Cats_neural_network_2.0\\1Test"
 
 # Predict an answer
 list_of_images_paths = [
@@ -126,6 +124,7 @@ def load_image(path: str):
 
 
 classes = ("cat", "dog")
+cnn.load_state_dict(torch.load(path_to_cnn_params, weights_only=True))
 for s in list_of_images_paths:
     img_tensor = load_image(s)
     img_tensor = img_tensor.to(device=device)
