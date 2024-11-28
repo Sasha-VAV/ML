@@ -1,0 +1,17 @@
+{"time":"2024-11-26T23:08:09.0457798+03:00","level":"INFO","msg":"using version","core version":"0.18.7"}
+{"time":"2024-11-26T23:08:09.0457798+03:00","level":"INFO","msg":"created symlink","path":"D:\\Backup\\Less Important\\My programs\\Git\\ML\\Models\\CNN\\dogs_vs_cats\\wandb\\run-20241126_230809-rmqz508p\\logs\\debug-core.log"}
+{"time":"2024-11-26T23:08:09.3210936+03:00","level":"INFO","msg":"created new stream","id":"rmqz508p"}
+{"time":"2024-11-26T23:08:09.3210936+03:00","level":"INFO","msg":"stream: started","id":"rmqz508p"}
+{"time":"2024-11-26T23:08:09.3210936+03:00","level":"INFO","msg":"writer: Do: started","stream_id":"rmqz508p"}
+{"time":"2024-11-26T23:08:09.3210936+03:00","level":"INFO","msg":"sender: started","stream_id":"rmqz508p"}
+{"time":"2024-11-26T23:08:09.3210936+03:00","level":"INFO","msg":"handler: started","stream_id":"rmqz508p"}
+{"time":"2024-11-26T23:08:09.6924215+03:00","level":"INFO","msg":"Starting system monitor"}
+{"time":"2024-11-26T23:08:19.6926585+03:00","level":"ERROR","msg":"monitor: disk: error sampling metrics: Incorrect function."}
+{"time":"2024-11-27T11:36:52.6945961+03:00","level":"INFO","msg":"stream: closing","id":"rmqz508p"}
+{"time":"2024-11-27T11:36:52.6945961+03:00","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2024-11-27T11:36:52.7131243+03:00","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2024-11-27T11:36:54.0274708+03:00","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2024-11-27T11:36:54.3020555+03:00","level":"INFO","msg":"handler: closed","stream_id":"rmqz508p"}
+{"time":"2024-11-27T11:36:54.3020555+03:00","level":"INFO","msg":"sender: closed","stream_id":"rmqz508p"}
+{"time":"2024-11-27T11:36:54.3020555+03:00","level":"INFO","msg":"writer: Close: closed","stream_id":"rmqz508p"}
+{"time":"2024-11-27T11:36:54.3022672+03:00","level":"INFO","msg":"stream: closed","id":"rmqz508p"}

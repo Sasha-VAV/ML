@@ -5,7 +5,7 @@ from torch import nn
 
 class CNN(nn.Module):
     """
-    LeNet CNN based module
+    AlexNet CNN based module
     """
 
     def __init__(self):

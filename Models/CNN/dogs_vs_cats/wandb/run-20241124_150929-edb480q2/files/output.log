@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "D:\Backup\Less Important\My programs\Git\ML\Models\CNN\dogs_vs_cats\main.py", line 81, in <module>
+    train_model(
+  File "D:\Backup\Less Important\My programs\Git\ML\Models\CNN\dogs_vs_cats\dvc_train\train.py", line 57, in train_model
+    outputs = cnn(inputs)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\nn\modules\module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\nn\modules\module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "D:\Backup\Less Important\My programs\Git\ML\Models\CNN\dogs_vs_cats\dvc_model\cnn.py", line 31, in forward
+    x = F.relu(self.fc2(x))
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\nn\modules\module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\nn\modules\module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\nn\modules\linear.py", line 125, in forward
+    return F.linear(input, self.weight, self.bias)
+KeyboardInterrupt

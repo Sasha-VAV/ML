@@ -1,0 +1,17 @@
+{"time":"2024-11-24T15:09:29.6604261+03:00","level":"INFO","msg":"using version","core version":"0.18.7"}
+{"time":"2024-11-24T15:09:29.6609456+03:00","level":"INFO","msg":"created symlink","path":"D:\\Backup\\Less Important\\My programs\\Git\\ML\\Models\\CNN\\dogs_vs_cats\\wandb\\run-20241124_150929-edb480q2\\logs\\debug-core.log"}
+{"time":"2024-11-24T15:09:29.7767842+03:00","level":"INFO","msg":"created new stream","id":"edb480q2"}
+{"time":"2024-11-24T15:09:29.7767842+03:00","level":"INFO","msg":"stream: started","id":"edb480q2"}
+{"time":"2024-11-24T15:09:29.7767842+03:00","level":"INFO","msg":"writer: Do: started","stream_id":"edb480q2"}
+{"time":"2024-11-24T15:09:29.7767842+03:00","level":"INFO","msg":"handler: started","stream_id":"edb480q2"}
+{"time":"2024-11-24T15:09:29.7767842+03:00","level":"INFO","msg":"sender: started","stream_id":"edb480q2"}
+{"time":"2024-11-24T15:09:30.1239335+03:00","level":"INFO","msg":"Starting system monitor"}
+{"time":"2024-11-24T15:09:40.1244286+03:00","level":"ERROR","msg":"monitor: disk: error sampling metrics: Incorrect function."}
+{"time":"2024-11-24T15:09:40.1915661+03:00","level":"INFO","msg":"stream: closing","id":"edb480q2"}
+{"time":"2024-11-24T15:09:40.1915661+03:00","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2024-11-24T15:09:40.1922132+03:00","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2024-11-24T15:09:41.4984067+03:00","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2024-11-24T15:09:41.7643589+03:00","level":"INFO","msg":"handler: closed","stream_id":"edb480q2"}
+{"time":"2024-11-24T15:09:41.7643589+03:00","level":"INFO","msg":"writer: Close: closed","stream_id":"edb480q2"}
+{"time":"2024-11-24T15:09:41.7643589+03:00","level":"INFO","msg":"sender: closed","stream_id":"edb480q2"}
+{"time":"2024-11-24T15:09:41.7643589+03:00","level":"INFO","msg":"stream: closed","id":"edb480q2"}

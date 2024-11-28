@@ -10,21 +10,27 @@ from dvc_test import test_model
 import wandb
 from PIL import Image
 from torchvision.transforms import transforms
+import torchvision
 
 """
 PUT YOUR CONSTANTS HERE
 """
 # Params
-path_to_cnn_params = "cnn.pth"
+path_to_cnn_params = "pretrained_configs/cnn.pth"
 
 # TRAIN
 # You should replace path_to_train_data with the folder that contains dogs and cats
 # Get it here https://www.kaggle.com/c/dogs-vs-cats/data
-# Leave None, if you do not want to dvc_train/dvc_test
+# Leave None, if you do not want to train/test
 # For example, path_to_train_data = None
 path_to_train_data = "D:\\Backup\\Less Important\\My programs\\Git\\Dog_vs_Cats_neural_network_2.0\\Train"
 train_batch_size = 4  # Number of samples per dvc_train batch
-epochs = 200
+epochs = 80
+
+# WANDB
+# Replace with True if you do want to use wandb
+# Also check wandb_init method
+is_use_wandb = True
 
 # TEST
 path_to_test_data = (
@@ -50,17 +56,18 @@ def wandb_init(is_init: bool = False):
     :param is_init: set by default ot False if you do not want to use wandb
     :return:
     """
-    wandb.init(
-        # set the wandb project where this run will be logged
-        project="dogs_vs_cats",
-        # track hyperparameters and run metadata
-        config={
-            "learning_rate": 0.001,
-            "architecture": "CNN",
-            "dataset": "Dog_vs_Cats_Kaggle",
-            "epochs": epochs,
-        },
-    )
+    if is_init:
+        wandb.init(
+            # set the wandb project where this run will be logged
+            project="dogs_vs_cats",
+            # track hyperparameters and run metadata
+            config={
+                "learning_rate": 0.001,
+                "architecture": "CNN",
+                "dataset": "Dog_vs_Cats_Kaggle",
+                "epochs": epochs,
+            },
+        )
     pass
 
 
@@ -68,7 +75,8 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 cnn = CNN().to(device)
 train_data_loader, test_data_loader = load_data(path_to_train_data, path_to_test_data)
 
-wandb_init()
+if train_data_loader is not None:
+    wandb_init(is_use_wandb)
 
 train_model(
     cnn=cnn,
@@ -77,6 +85,9 @@ train_model(
     path_to_cnn_params=path_to_cnn_params,
     epochs=epochs,
     test_data_loader=test_data_loader,
+    is_use_wandb=is_use_wandb,
+    refresh_train_data=True,
+    path_to_train_data=path_to_train_data,
 )
 
 test_model(
@@ -120,6 +131,8 @@ for s in list_of_images_paths:
     img_tensor = img_tensor.to(device=device)
     output = cnn(img_tensor)
     _, predicted = torch.max(output, 1)
-
-    print("Predicted: ", " ".join(f"{classes[predicted]:5s}"))
+    try:
+        print("Predicted: ", " ".join(f"{classes[predicted]:5s}"))
+    except IndexError:
+        print(f"Predicted: class with number {predicted + 1}, which is wrong, sorry")
     # print(f"Tensor: {output}")
