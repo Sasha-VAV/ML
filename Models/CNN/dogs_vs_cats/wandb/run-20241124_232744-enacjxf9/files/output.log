@@ -1,0 +1,26 @@
+C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\PIL\TiffImagePlugin.py:935: UserWarning: Truncated File Read
+  warnings.warn(str(msg))
+[1,  1000] loss: 0.278
+[1,  2000] loss: 0.289
+[1,  3000] loss: 0.278
+[1,  4000] loss: 0.272
+[1,  5000] loss: 0.295
+[1,  6000] loss: 0.281
+1000 test samples. Accuracy: 86.4
+[2,  1000] loss: 0.283
+[2,  2000] loss: 0.281
+[2,  3000] loss: 0.262
+[2,  4000] loss: 0.272
+[2,  5000] loss: 0.264
+Traceback (most recent call last):
+  File "D:\Backup\Less Important\My programs\Git\ML\Models\CNN\dogs_vs_cats\main.py", line 81, in <module>
+    train_model(
+  File "D:\Backup\Less Important\My programs\Git\ML\Models\CNN\dogs_vs_cats\dvc_train\train.py", line 59, in train_model
+    loss.backward()
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\_tensor.py", line 581, in backward
+    torch.autograd.backward(
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\autograd\__init__.py", line 347, in backward
+    _engine_run_backward(
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\autograd\graph.py", line 825, in _engine_run_backward
+    return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+KeyboardInterrupt

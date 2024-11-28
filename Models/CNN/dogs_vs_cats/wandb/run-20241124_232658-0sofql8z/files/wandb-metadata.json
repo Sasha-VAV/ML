@@ -1,0 +1,17 @@
+{
+  "os":  "Windows-10-10.0.22621-SP0",
+  "python":  "3.10.15",
+  "startedAt":  "2024-11-24T20:26:58.575854Z",
+  "program":  "D:\\Backup\\Less Important\\My programs\\Git\\ML\\Models\\CNN\\dogs_vs_cats\\main.py",
+  "codePath":  "Models\\CNN\\dogs_vs_cats\\main.py",
+  "git":  {
+    "remote":  "https://github.com/Sasha-VAV/ML.git",
+    "commit":  "4690d93a96ddb93e8292af15127a549d14a59717"
+  },
+  "email":  "vav110011@gmail.com",
+  "root":  "D:\\Backup\\Less Important\\My programs\\Git\\ML\\Models\\CNN\\dogs_vs_cats",
+  "host":  "DESKTOP-A3TG105",
+  "username":  "vav11",
+  "executable":  "C:\\Users\\vav11\\anaconda3\\envs\\Conda310\\python.exe",
+  "codePathLocal":  "main.py"
+}
