@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "dogs-vs-cats4-0"
+version = "0.1.0"
+description = ""
+authors = ["Sashavav <vav110011@gmail.com>"]
+readme = "README.md"
+packages = [{include = "dogs_vs_cats4"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pre-commit = "^4.0.1"
+torch = "^2.5.1"
+einops = "^0.8.0"
+torchsummary = "^1.5.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
