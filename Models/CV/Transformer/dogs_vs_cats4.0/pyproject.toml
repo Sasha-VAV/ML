@@ -12,6 +12,7 @@ pre-commit = "^4.0.1"
 torch = "^2.5.1"
 einops = "^0.8.0"
 torchsummary = "^1.5.1"
+torchvision = "^0.20.1"
 
 
 [build-system]

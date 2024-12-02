@@ -41,9 +41,7 @@ class PatchEmbedding(nn.Module):
         b, c, h, w = x.shape
 
         x = self.projection(x)
-        print(x.shape)
         cls_tokens = torch.cat([self.cls_token.repeat(b, 1, 1), x], dim=1)
-        print(cls_tokens.shape)
 
         x = cls_tokens + self.positions
 
@@ -219,10 +217,4 @@ class ViT(nn.Module):
         # Classifier
         x = self.classifier(x)
 
-        return x
-
-
-x = torch.randn(1, 3, 224, 224)
-vit = ViT()
-out = vit(x)
-print(out.shape)
+        return x[:, 0]
