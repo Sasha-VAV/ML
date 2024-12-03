@@ -31,10 +31,15 @@ class PatchEmbedding(nn.Module):
             ),
             Rearrange("b e h w -> b (h w) e"),
         )
-        self.cls_token = nn.Parameter(torch.rand((1, 1, embed_dim)))
-        self.positions = nn.Parameter(
-            torch.rand(((img_size // patch_size) ** 2 + 1, embed_dim))
-        )
+        cls = torch.rand((1, 1, embed_dim))
+
+        self.cls_token = nn.Parameter(cls)
+        pos = torch.rand(((img_size // patch_size) ** 2 + 1, embed_dim))
+        """
+        for i in range((img_size // patch_size) ** 2 + 1):
+            if i % 2 == 0:
+                pos"""
+        self.positions = nn.Parameter(pos)
 
     def forward(self, x: Tensor) -> Tensor:
         # проверка на размер изображения
@@ -63,13 +68,13 @@ class MLP(nn.Module):
         )
 
     def forward(self, x):
-        x = self.linear.forward(x)
+        x = self.linear(x)
         return x
 
 
 class Attention(nn.Module):
     def __init__(
-        self, dim=768, num_heads=12, qkv_bias=False, attn_drop=0.0, out_drop=0.0
+        self, dim=768, num_heads=8, qkv_bias=False, attn_drop=0.0, out_drop=0.0
     ):
         super().__init__()
         self.num_heads = num_heads
@@ -86,21 +91,21 @@ class Attention(nn.Module):
         )
         self.out_drop = nn.Dropout(out_drop)
 
-        self.softmax = nn.Softmax(dim=2)
+        self.softmax = nn.Softmax(dim=-1)
         self.qkv_rearrange = Rearrange("b e h c hd -> b (e h) c hd")
 
     def forward(self, x):
         # Attention
         x = self.qkv(x)
-        x = self.attn_drop(x)
 
         x = einops.rearrange(x, "b c e h hd -> b e h c hd")
         v, q, k = torch.split(x, 1, dim=1)
         v = self.qkv_rearrange(v)
         q = self.qkv_rearrange(q)
         k = self.qkv_rearrange(k)
-        x = self.softmax((q @ k.transpose(2, 3)) * self.scale)
-        x = x @ v
+        x = self.softmax(torch.matmul(q, k.transpose(-2, -1)) * self.scale)
+        x = self.attn_drop(x)
+        x = torch.matmul(x, v)
         # Out projection
 
         x = self.out(x)
@@ -110,7 +115,7 @@ class Attention(nn.Module):
 
 
 class Block(nn.Module):
-    def __init__(self, dim, num_heads=12, mlp_ratio=4, drop_rate=0.0, qkv_bias=False):
+    def __init__(self, dim, num_heads=8, mlp_ratio=4, drop_rate=0.0, qkv_bias=False):
         super().__init__()
 
         # Normalization
@@ -118,28 +123,37 @@ class Block(nn.Module):
         self.norm2 = nn.LayerNorm(dim)
 
         # Attention
-        self.attn = Attention(dim=dim, num_heads=num_heads, qkv_bias=qkv_bias)
+        self.attn = Attention(
+            dim=dim,
+            num_heads=num_heads,
+            qkv_bias=qkv_bias,
+            attn_drop=drop_rate,
+            out_drop=drop_rate,
+        )
 
         # Dropout
         self.drop = nn.Dropout(drop_rate)
 
         # MLP
         self.mlp = MLP(
-            in_features=dim, hidden_features=dim * mlp_ratio, out_features=dim
+            in_features=dim,
+            hidden_features=dim * mlp_ratio,
+            out_features=dim,
+            drop=drop_rate,
         )
 
     def forward(self, x):
-        y = self.norm1(x)
+        x = self.norm1(x)
         # Attention
-        y = self.attn(y)
+        y = self.attn(x)
         y = self.drop(y)
 
         x = x + y
 
-        y = self.norm2(x)
+        x = self.norm2(x)
 
         # MLP
-        y = self.mlp(y)
+        y = self.mlp(x)
         y = self.drop(y)
 
         x = x + y
@@ -148,13 +162,13 @@ class Block(nn.Module):
 
 class Transformer(nn.Module):
     def __init__(
-        self, depth, dim, num_heads=12, mlp_ratio=4, drop_rate=0.0, qkv_bias=False
+        self, depth, dim, num_heads=8, mlp_ratio=4, drop_rate=0.0, qkv_bias=False
     ):
         super().__init__()
         self.blocks = nn.ModuleList(
             [
                 Block(dim, num_heads, mlp_ratio, drop_rate, qkv_bias=qkv_bias)
-                for i in range(depth)
+                for _ in range(depth)
             ]
         )
 
@@ -215,6 +229,8 @@ class ViT(nn.Module):
         x = self.transformer(x)
 
         # Classifier
+        x = x[:, 0]
+        # x = x.mean(dim=1)
         x = self.classifier(x)
 
-        return x[:, 0]
+        return x

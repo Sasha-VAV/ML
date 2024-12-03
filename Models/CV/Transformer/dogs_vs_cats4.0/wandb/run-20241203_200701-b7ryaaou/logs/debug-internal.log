@@ -1,0 +1,17 @@
+{"time":"2024-12-03T20:07:01.1816162+03:00","level":"INFO","msg":"using version","core version":"0.18.7"}
+{"time":"2024-12-03T20:07:01.1816162+03:00","level":"INFO","msg":"created symlink","path":"D:\\Backup\\Less Important\\My programs\\Git\\ML\\Models\\CV\\Transformer\\dogs_vs_cats4.0\\wandb\\run-20241203_200701-b7ryaaou\\logs\\debug-core.log"}
+{"time":"2024-12-03T20:07:01.2989316+03:00","level":"INFO","msg":"created new stream","id":"b7ryaaou"}
+{"time":"2024-12-03T20:07:01.2989316+03:00","level":"INFO","msg":"stream: started","id":"b7ryaaou"}
+{"time":"2024-12-03T20:07:01.2989316+03:00","level":"INFO","msg":"writer: Do: started","stream_id":"b7ryaaou"}
+{"time":"2024-12-03T20:07:01.2989316+03:00","level":"INFO","msg":"handler: started","stream_id":"b7ryaaou"}
+{"time":"2024-12-03T20:07:01.2989316+03:00","level":"INFO","msg":"sender: started","stream_id":"b7ryaaou"}
+{"time":"2024-12-03T20:07:01.6869952+03:00","level":"INFO","msg":"Starting system monitor"}
+{"time":"2024-12-03T20:07:11.6871126+03:00","level":"ERROR","msg":"monitor: disk: error sampling metrics: Incorrect function."}
+{"time":"2024-12-03T20:11:26.8280076+03:00","level":"INFO","msg":"stream: closing","id":"b7ryaaou"}
+{"time":"2024-12-03T20:11:26.8280076+03:00","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2024-12-03T20:11:26.8285265+03:00","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2024-12-03T20:11:28.1666447+03:00","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2024-12-03T20:11:28.4509022+03:00","level":"INFO","msg":"handler: closed","stream_id":"b7ryaaou"}
+{"time":"2024-12-03T20:11:28.4509022+03:00","level":"INFO","msg":"sender: closed","stream_id":"b7ryaaou"}
+{"time":"2024-12-03T20:11:28.4509022+03:00","level":"INFO","msg":"writer: Close: closed","stream_id":"b7ryaaou"}
+{"time":"2024-12-03T20:11:28.4509022+03:00","level":"INFO","msg":"stream: closed","id":"b7ryaaou"}

@@ -1,0 +1,16 @@
+{"time":"2024-12-03T20:03:33.1160179+03:00","level":"INFO","msg":"using version","core version":"0.18.7"}
+{"time":"2024-12-03T20:03:33.1160179+03:00","level":"INFO","msg":"created symlink","path":"D:\\Backup\\Less Important\\My programs\\Git\\ML\\Models\\CV\\Transformer\\dogs_vs_cats4.0\\wandb\\run-20241203_200333-ot20keec\\logs\\debug-core.log"}
+{"time":"2024-12-03T20:03:33.4351494+03:00","level":"INFO","msg":"created new stream","id":"ot20keec"}
+{"time":"2024-12-03T20:03:33.4351494+03:00","level":"INFO","msg":"stream: started","id":"ot20keec"}
+{"time":"2024-12-03T20:03:33.4351494+03:00","level":"INFO","msg":"handler: started","stream_id":"ot20keec"}
+{"time":"2024-12-03T20:03:33.4351494+03:00","level":"INFO","msg":"writer: Do: started","stream_id":"ot20keec"}
+{"time":"2024-12-03T20:03:33.4351494+03:00","level":"INFO","msg":"sender: started","stream_id":"ot20keec"}
+{"time":"2024-12-03T20:03:33.7536074+03:00","level":"INFO","msg":"Starting system monitor"}
+{"time":"2024-12-03T20:03:34.0586803+03:00","level":"INFO","msg":"stream: closing","id":"ot20keec"}
+{"time":"2024-12-03T20:03:34.0591995+03:00","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2024-12-03T20:03:34.0598741+03:00","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2024-12-03T20:03:35.8076885+03:00","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2024-12-03T20:03:36.0614317+03:00","level":"INFO","msg":"handler: closed","stream_id":"ot20keec"}
+{"time":"2024-12-03T20:03:36.0614317+03:00","level":"INFO","msg":"writer: Close: closed","stream_id":"ot20keec"}
+{"time":"2024-12-03T20:03:36.0614317+03:00","level":"INFO","msg":"sender: closed","stream_id":"ot20keec"}
+{"time":"2024-12-03T20:03:36.0623719+03:00","level":"INFO","msg":"stream: closed","id":"ot20keec"}

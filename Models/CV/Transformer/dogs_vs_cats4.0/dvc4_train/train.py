@@ -21,7 +21,7 @@ def train_model(
     path_to_train_data: str | None = None,
     batch_size: int = 4,
     save_n_times_per_epoch: int = 5,
-    max_number_of_samples: int = 100000,
+    max_number_of_samples: int = 24000,
 ):
     """
     Function to train the CNN model
@@ -42,7 +42,7 @@ def train_model(
     if train_data_loader is None:
         return
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.SGD(vit.parameters(), lr=0.001, momentum=0.9)
+    optimizer = optim.SGD(vit.parameters(), lr=0.001)
     try:
         vit.load_state_dict(torch.load(path_to_nn_params, weights_only=True))
     except FileNotFoundError:
@@ -75,13 +75,15 @@ def train_model(
                 i % save_every_n_times_per_epoch == save_every_n_times_per_epoch - 1
             ):  # print every n mini-batches
                 print(
-                    f"[{epoch + 1}, {(i + 1) * batch_size:5d}] loss: {running_loss / save_every_n_times_per_epoch:.3f}"
+                    f"[{epoch + 1}, {(i + 1) * batch_size:5d}] "
+                    f"loss: {running_loss / save_every_n_times_per_epoch / batch_size:.3f}"
                 )
                 running_loss = 0.0
                 torch.save(vit.state_dict(), path_to_nn_params)
 
             if i * batch_size >= max_number_of_samples:
                 break
+        print(f"Total loss {total_loss / max_number_of_samples:.3f}")
         if test_data_loader is not None:
             accuracy = test_model(vit, device, test_data_loader, path_to_nn_params)
             if is_use_wandb:
@@ -90,9 +92,7 @@ def train_model(
                 )
         else:
             if is_use_wandb:
-                wandb.log(
-                    {"loss": total_loss / max_number_of_samples, "accuracy": accuracy}
-                )
+                wandb.log({"loss": total_loss / max_number_of_samples})
         if refresh_train_data:
             train_data_loader, _ = load_data(path_to_train_data=path_to_train_data)
 

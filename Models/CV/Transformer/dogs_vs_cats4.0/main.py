@@ -24,14 +24,13 @@ path_to_nn_params = "pretrained_configs/dvc.pth"
 # Leave None, if you do not want to train/test
 # For example, path_to_train_data = None
 path_to_train_data = "D:\\Backup\\Less Important\\My programs\\Git\\Dog_vs_Cats_neural_network_2.0\\Train"
-train_batch_size = 50  # Number of samples per train batch
-epochs = 80  # Number of learning epochs
+train_batch_size = 1  # Number of samples per train batch
+epochs = 200  # Number of learning epochs
 save_n_times_per_epoch = (
-    5  # How much times per one learning epoch you do want to save data and log it
+    1  # How much times per one learning epoch you do want to save data and log it
 )
-max_number_of_samples = (
-    24000  # How much training samples are going to be used for training
-)
+max_number_of_samples = 2  # How much training samples are going to be used for training
+is_refresh_train_data = False  # Set True, if you want to refresh data after every epoch
 is_aug = False  # Set True, if you want to use data augmentation to improve results
 is_shuffle_train_data = True  # Set True, if you want to shuffle train data
 num_of_workers = 0  # Set number of processes that are going to load the data
@@ -42,9 +41,7 @@ num_of_workers = 0  # Set number of processes that are going to load the data
 is_use_wandb = True
 
 # TEST
-path_to_test_data = (
-    "D:\\Backup\\Less Important\\My programs\\Git\\Dog_vs_Cats_neural_network_2.0\\Test"
-)
+path_to_test_data = "D:\\Backup\\Less Important\\My programs\\Git\\Dog_vs_Cats_neural_network_2.0\\small_test"
 
 # Predict an answer
 list_of_images_paths = [
@@ -82,7 +79,7 @@ def wandb_init(is_init: bool = False):
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-vit = ViT().to(device)
+vit = ViT(depth=12, drop_rate=0.2).to(device)
 train_data_loader, test_data_loader = load_data(
     path_to_train_data,
     path_to_test_data,
@@ -104,7 +101,7 @@ train_model(
     epochs=epochs,
     test_data_loader=test_data_loader,
     is_use_wandb=is_use_wandb,
-    refresh_train_data=True,
+    refresh_train_data=is_refresh_train_data,
     path_to_train_data=path_to_train_data,
     batch_size=train_batch_size,
     save_n_times_per_epoch=save_n_times_per_epoch,

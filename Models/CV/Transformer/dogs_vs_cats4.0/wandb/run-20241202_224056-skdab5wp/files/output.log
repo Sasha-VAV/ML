@@ -1,0 +1,39 @@
+C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\PIL\TiffImagePlugin.py:935: UserWarning: Truncated File Read
+  warnings.warn(str(msg))
+[1,  4800] loss: 0.704
+[1,  9600] loss: 0.701
+[1, 14400] loss: 0.686
+[1, 19200] loss: 0.683
+[1, 24000] loss: 0.701
+Traceback (most recent call last):
+  File "D:\Backup\Less Important\My programs\Git\ML\Models\CV\Transformer\dogs_vs_cats4.0\main.py", line 99, in <module>
+    train_model(
+  File "D:\Backup\Less Important\My programs\Git\ML\Models\CV\Transformer\dogs_vs_cats4.0\dvc4_train\train.py", line 86, in train_model
+    accuracy = test_model(vit, device, test_data_loader, path_to_nn_params)
+  File "D:\Backup\Less Important\My programs\Git\ML\Models\CV\Transformer\dogs_vs_cats4.0\dvc4_test\test.py", line 31, in test_model
+    outputs = nn(inputs)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\nn\modules\module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\nn\modules\module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "D:\Backup\Less Important\My programs\Git\ML\Models\CV\Transformer\dogs_vs_cats4.0\dvc4_model\transformer.py", line 215, in forward
+    x = self.transformer(x)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\nn\modules\module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\nn\modules\module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "D:\Backup\Less Important\My programs\Git\ML\Models\CV\Transformer\dogs_vs_cats4.0\dvc4_model\transformer.py", line 163, in forward
+    x = block(x)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\nn\modules\module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\nn\modules\module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "D:\Backup\Less Important\My programs\Git\ML\Models\CV\Transformer\dogs_vs_cats4.0\dvc4_model\transformer.py", line 134, in forward
+    y = self.attn(y)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\nn\modules\module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\nn\modules\module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "D:\Backup\Less Important\My programs\Git\ML\Models\CV\Transformer\dogs_vs_cats4.0\dvc4_model\transformer.py", line 102, in forward
+    x = self.softmax((q @ k.transpose(2, 3)) * self.scale)
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 90.00 MiB. GPU 0 has a total capacity of 8.00 GiB of which 0 bytes is free. Of the allocated memory 13.76 GiB is allocated by PyTorch, and 849.89 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)

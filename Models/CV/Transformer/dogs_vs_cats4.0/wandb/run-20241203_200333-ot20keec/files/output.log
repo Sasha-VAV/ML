@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "D:\Backup\Less Important\My programs\Git\ML\Models\CV\Transformer\dogs_vs_cats4.0\main.py", line 101, in <module>
+    train_model(
+  File "D:\Backup\Less Important\My programs\Git\ML\Models\CV\Transformer\dogs_vs_cats4.0\dvc4_train\train.py", line 47, in train_model
+    vit.load_state_dict(torch.load(path_to_nn_params, weights_only=True))
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\serialization.py", line 1351, in load
+    return _load(
+  File "C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\torch\serialization.py", line 1840, in _load
+    data_file = io.BytesIO(zip_file.get_record(pickle_file))
+RuntimeError: PytorchStreamReader failed locating file data.pkl: file not found
