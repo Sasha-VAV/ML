@@ -1,4 +1,5 @@
 import torchvision.transforms as transforms
+from PIL import Image
 from torch.utils.data import DataLoader
 from torchvision.datasets import ImageFolder
 
@@ -6,6 +7,7 @@ from torchvision.datasets import ImageFolder
 def load_data(
     path_to_train_data: str | None = None,
     path_to_test_data: str | None = None,
+    image_size: int = 224,
     train_batch_size: int = 4,
     test_batch_size: int = 4,
     is_augmentation: bool = False,
@@ -16,6 +18,7 @@ def load_data(
     Function to load the training and testing data
     :param path_to_train_data: string path to train data
     :param path_to_test_data: string path to test data
+    :param image_size: size of image
     :param train_batch_size: number of samples per train batch
     :param test_batch_size: number of samples per test batch
     :param is_augmentation: whether to use data augmentation or not
@@ -25,8 +28,8 @@ def load_data(
     """
     augmented_data_transform = transforms.Compose(
         [
-            transforms.Resize(224),
-            transforms.CenterCrop(224),
+            transforms.Resize(image_size),
+            transforms.CenterCrop(image_size),
             transforms.RandomHorizontalFlip(),
             transforms.RandomRotation(179),
             transforms.RandomVerticalFlip(),
@@ -37,8 +40,8 @@ def load_data(
     )
     default_data_transform = transforms.Compose(
         [
-            transforms.Resize(224),
-            transforms.CenterCrop(224),
+            transforms.Resize(image_size),
+            transforms.CenterCrop(image_size),
             transforms.ToTensor(),
             transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
         ]
@@ -46,6 +49,7 @@ def load_data(
     if path_to_train_data is not None:
         try:
             if is_augmentation:
+                # Replace this string if you want to use build in datasets
                 train_data = ImageFolder(
                     root=path_to_train_data, transform=augmented_data_transform
                 )
@@ -54,6 +58,7 @@ def load_data(
                     batch_size=train_batch_size,
                     shuffle=is_shuffle_train,
                     num_workers=num_workers,
+                    drop_last=True,
                 )
             else:
                 train_data = ImageFolder(
@@ -64,6 +69,7 @@ def load_data(
                     batch_size=train_batch_size,
                     shuffle=is_shuffle_train,
                     num_workers=num_workers,
+                    drop_last=True,
                 )
         except FileNotFoundError:
             train_data_loader = None
@@ -71,6 +77,7 @@ def load_data(
         train_data_loader = None
     if path_to_test_data is not None:
         try:
+            # Replace this string if you want to use build in datasets
             test_data = ImageFolder(
                 root=path_to_test_data, transform=default_data_transform
             )
@@ -86,3 +93,25 @@ def load_data(
     else:
         test_data_loader = None
     return train_data_loader, test_data_loader
+
+
+def load_image(path: str):
+    transform = transforms.Compose(
+        [
+            transforms.Resize(224),  # Optional: Resize the image
+            transforms.CenterCrop(224),  # Optional: Center crop the image
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]),
+        ]
+    )
+
+    # Load the image
+    img = Image.open(path)
+
+    # Apply the transform to the image
+    img_tensor = transform(img)
+
+    # Add a batch dimension (since the model expects a batch of images)
+    img_tensor = img_tensor.unsqueeze(0)
+
+    return img_tensor

@@ -1,6 +1,4 @@
-import einops
 import torch
-import torch.nn.functional as F
 from einops.layers.torch import Rearrange
 from torch import Tensor
 from torch import nn
@@ -19,8 +17,6 @@ class PatchEmbedding(nn.Module):
         embed_dim: int = 768,
     ):
         super().__init__()
-        # img_size = (img_size, img_size)
-        # patch_size = (patch_size, patch_size)
 
         self.projection = nn.Sequential(
             nn.Conv2d(
@@ -35,14 +31,9 @@ class PatchEmbedding(nn.Module):
 
         self.cls_token = nn.Parameter(cls)
         pos = torch.rand(((img_size // patch_size) ** 2 + 1, embed_dim))
-        """
-        for i in range((img_size // patch_size) ** 2 + 1):
-            if i % 2 == 0:
-                pos"""
         self.positions = nn.Parameter(pos)
 
     def forward(self, x: Tensor) -> Tensor:
-        # проверка на размер изображения
         b, c, h, w = x.shape
 
         x = self.projection(x)
@@ -83,7 +74,7 @@ class Attention(nn.Module):
 
         self.qkv = nn.Sequential(
             nn.Linear(dim, dim * 3, bias=qkv_bias),
-            Rearrange("b c (e h hd) -> b c e h hd", e=3, h=num_heads, hd=head_dim),
+            Rearrange("b c (e h hd) -> b e h c hd", e=3, h=num_heads, hd=head_dim),
         )
         self.attn_drop = nn.Dropout(attn_drop)
         self.out = nn.Sequential(
@@ -98,13 +89,13 @@ class Attention(nn.Module):
         # Attention
         x = self.qkv(x)
 
-        x = einops.rearrange(x, "b c e h hd -> b e h c hd")
+        # x = einops.rearrange(x, "b c e h hd -> b e h c hd")
         v, q, k = torch.split(x, 1, dim=1)
         v = self.qkv_rearrange(v)
         q = self.qkv_rearrange(q)
         k = self.qkv_rearrange(k)
         x = self.softmax(torch.matmul(q, k.transpose(-2, -1)) * self.scale)
-        x = self.attn_drop(x)
+        # x = self.attn_drop(x)
         x = torch.matmul(x, v)
         # Out projection
 
