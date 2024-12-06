@@ -11,7 +11,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Set model architecture
 img_size = 224
-num_classes = 100
+num_classes = 2
 is_use_torch_vit = False
 if not is_use_torch_vit:
     # Edit your own model architecture
@@ -40,10 +40,10 @@ path_to_nn_params = "pretrained_configs/dvc.pth"
 # Get it here https://www.kaggle.com/c/dogs-vs-cats/data
 # If you want to skip training or testing, then leave this field with incorrect path or None
 # For example, path_to_train_data = None, or path_to_test_data = "invalid_path"
-path_to_train_data = "D:\\Backup\\Less Important\\My programs\\Git\\Dog_vs_Cats_neural_network_2.0\\small_train"
-is_use_build_in_train = path_to_train_data is None
-path_to_test_data = "D:\\Backup\\Less Important\\My programs\\Git\\Dog_vs_Cats_neural_network_2.0\\small_test"
-is_use_build_in_test = path_to_test_data is None
+path_to_train_data = "small_train"
+is_use_build_in_train = False
+path_to_test_data = "small_test"
+is_use_build_in_test = False
 num_of_workers = 0
 # Set number of processes that are going to load the data, or leave 0
 
@@ -51,14 +51,14 @@ num_of_workers = 0
 train_batch_size = 10  # Number of samples per batch
 num_of_train_epochs = 1000
 # Leave -1, if you want to use all the samples from train dataset
-max_number_of_train_samples = 100
+max_number_of_train_samples = 202
 is_refresh_train_data = False  # Set True, if you want to refresh data after every epoch
 is_aug = False  # Set True, if you want to use data augmentation to improve results
 is_shuffle_train_data = False  # Set True, if you want to shuffle train data
 
 # Validation and test config
 number_of_validation_samples = 10  # Leave 0, if you do not want to validate data
-max_number_of_test_samples = 10
+max_number_of_test_samples = 20
 # Leave -1, you want to use all the samples from test dataset
 
 # Logging
