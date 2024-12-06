@@ -11,9 +11,9 @@ pip install wandb
 ```
 - You need to train model,
 or [download weights](https://huggingface.co/Sashavav/dogs_vs_cats_vit/tree/main/dogs_vs_cats4.0/pretrained_configs)
-- Extract them in root folder
+- Extract downloaded folder in the root folder
 - To replace default photos and set yours,
-you should move to dogs_vs_cats4/dvc4_config_config.py and change
+you should move to dogs_vs_cats4/dvc4_config/config.py and change
 list_of_images_paths parameter
 - Configure conda 310 env
 - Launch dogs_vs_cats4/\_\_main\_\_.py
