@@ -1,8 +1,9 @@
 """
 Main class to work with CNN
 """
-
+import torch
 import wandb
+from torch import nn
 
 from dvc4_config import *
 from dvc4_data import load_data, load_image
@@ -24,6 +25,20 @@ def wandb_init(is_init: bool = False):
             config=wandb_config,
         )
     pass
+
+
+def change_last_layer():
+    vit.load_state_dict(torch.load(path_to_pretrained_params, weights_only=True))
+    for param in vit.parameters():
+        param.requires_grad = False
+    vit.heads = nn.Linear(vit.hidden_dim, num_classes)
+    if is_save_last_layer:
+        torch.save(vit.state_dict(), path_to_nn_params)
+    return vit.to(device)
+
+
+if is_need_to_change_last_layer:
+    vit = change_last_layer()
 
 
 pytorch_total_params = sum(p.numel() for p in vit.parameters())
@@ -78,7 +93,6 @@ if list_of_images_paths is None:
 
 print("Now let's see your photos")
 
-
 vit.load_state_dict(torch.load(path_to_nn_params, weights_only=True))
 for s in list_of_images_paths:
     img_tensor = load_image(s)
@@ -88,5 +102,5 @@ for s in list_of_images_paths:
     try:
         print("Predicted: ", " ".join(f"{classes[predicted]:5s}"))
     except IndexError:
-        print(f"Predicted: class with number {predicted + 1}, which is wrong, sorry")
+        print(f"Predicted: class with number {predicted}, which is wrong, sorry")
     # print(f"Tensor: {output}")

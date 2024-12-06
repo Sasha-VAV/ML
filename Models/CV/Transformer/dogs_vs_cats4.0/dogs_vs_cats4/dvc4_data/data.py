@@ -2,7 +2,11 @@ import torchvision.transforms as transforms
 from PIL import Image
 from torch.utils.data import DataLoader
 from torchvision.datasets import ImageFolder, FGVCAircraft
-from dogs_vs_cats4.dvc4_config import is_use_build_in_train, is_use_build_in_test
+from dogs_vs_cats4.dvc4_config import (
+    is_use_build_in_train,
+    is_use_build_in_test,
+    img_size,
+)
 
 
 def load_data(
@@ -36,7 +40,7 @@ def load_data(
             transforms.RandomVerticalFlip(),
             transforms.AutoAugment(),
             transforms.ToTensor(),
-            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+            transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
         ]
     )
     default_data_transform = transforms.Compose(
@@ -44,7 +48,7 @@ def load_data(
             transforms.Resize(image_size),
             transforms.CenterCrop(image_size),
             transforms.ToTensor(),
-            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+            transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
         ]
     )
     if path_to_train_data is not None:
@@ -124,10 +128,10 @@ def load_data(
 def load_image(path: str):
     transform = transforms.Compose(
         [
-            transforms.Resize(224),  # Optional: Resize the image
-            transforms.CenterCrop(224),  # Optional: Center crop the image
+            transforms.Resize(img_size),  # Optional: Resize the image
+            transforms.CenterCrop(img_size),  # Optional: Center crop the image
             transforms.ToTensor(),
-            transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]),
+            transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
         ]
     )
 
