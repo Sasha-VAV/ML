@@ -15,9 +15,9 @@ class PatchEmbedding(nn.Module):
         patch_size: int = 16,
         in_chans: int = 3,
         embed_dim: int = 768,
+        dropout: float = 0.0,
     ):
         super().__init__()
-
         self.projection = nn.Sequential(
             nn.Conv2d(
                 in_channels=in_chans,
@@ -27,11 +27,12 @@ class PatchEmbedding(nn.Module):
             ),
             Rearrange("b e h w -> b (h w) e"),
         )
-        cls = torch.rand((1, 1, embed_dim))
 
-        self.cls_token = nn.Parameter(cls)
-        pos = torch.rand(((img_size // patch_size) ** 2 + 1, embed_dim))
-        self.positions = nn.Parameter(pos)
+        self.cls_token = nn.Parameter(torch.rand((1, 1, embed_dim)))
+        self.positions = nn.Parameter(
+            torch.rand((img_size // patch_size) ** 2 + 1, embed_dim)
+        )
+        self.dropout = nn.Dropout(dropout)
 
     def forward(self, x: Tensor) -> Tensor:
         b, c, h, w = x.shape
@@ -40,7 +41,7 @@ class PatchEmbedding(nn.Module):
         cls_tokens = torch.cat([self.cls_token.repeat(b, 1, 1), x], dim=1)
 
         x = cls_tokens + self.positions
-
+        x = self.dropout(x)
         return x
 
 
@@ -65,20 +66,23 @@ class MLP(nn.Module):
 
 class Attention(nn.Module):
     def __init__(
-        self, dim=768, num_heads=8, qkv_bias=False, attn_drop=0.0, out_drop=0.0
+        self, embed_dim=768, num_heads=8, qkv_bias=False, attn_drop=0.0, out_drop=0.0
     ):
         super().__init__()
         self.num_heads = num_heads
-        head_dim = dim // num_heads
+        head_dim = embed_dim // num_heads
+        assert (
+            head_dim * num_heads == embed_dim
+        ), "embed_dim must be divisible by num_heads"
         self.scale = head_dim**-0.5
 
         self.qkv = nn.Sequential(
-            nn.Linear(dim, dim * 3, bias=qkv_bias),
+            nn.Linear(embed_dim, embed_dim * 3, bias=qkv_bias),
             Rearrange("b c (e h hd) -> b e h c hd", e=3, h=num_heads, hd=head_dim),
         )
         self.attn_drop = nn.Dropout(attn_drop)
         self.out = nn.Sequential(
-            Rearrange("b h c hd -> b c (h hd)"), nn.Linear(dim, dim)
+            Rearrange("b h c hd -> b c (h hd)"), nn.Linear(embed_dim, embed_dim)
         )
         self.out_drop = nn.Dropout(out_drop)
 
@@ -89,13 +93,11 @@ class Attention(nn.Module):
         # Attention
         x = self.qkv(x)
 
-        # x = einops.rearrange(x, "b c e h hd -> b e h c hd")
         v, q, k = torch.split(x, 1, dim=1)
         v = self.qkv_rearrange(v)
         q = self.qkv_rearrange(q)
         k = self.qkv_rearrange(k)
         x = self.softmax(torch.matmul(q, k.transpose(-2, -1)) * self.scale)
-        # x = self.attn_drop(x)
         x = torch.matmul(x, v)
         # Out projection
 
@@ -115,7 +117,7 @@ class Block(nn.Module):
 
         # Attention
         self.attn = Attention(
-            dim=dim,
+            embed_dim=dim,
             num_heads=num_heads,
             qkv_bias=qkv_bias,
             attn_drop=drop_rate,
@@ -134,21 +136,17 @@ class Block(nn.Module):
         )
 
     def forward(self, x):
-        x = self.norm1(x)
+        y = self.norm1(x)
         # Attention
-        y = self.attn(x)
+        y = self.attn(y)
         y = self.drop(y)
-
         x = x + y
 
-        x = self.norm2(x)
-
+        y = self.norm2(x)
         # MLP
-        y = self.mlp(x)
+        y = self.mlp(y)
         y = self.drop(y)
-
-        x = x + y
-        return x
+        return x + y
 
 
 class Transformer(nn.Module):
@@ -221,7 +219,6 @@ class ViT(nn.Module):
 
         # Classifier
         x = x[:, 0]
-        # x = x.mean(dim=1)
         x = self.classifier(x)
 
         return x

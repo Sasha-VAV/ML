@@ -1,7 +1,8 @@
 import torchvision.transforms as transforms
 from PIL import Image
 from torch.utils.data import DataLoader
-from torchvision.datasets import ImageFolder
+from torchvision.datasets import ImageFolder, FGVCAircraft
+from dogs_vs_cats4.dvc4_config import is_use_build_in_train, is_use_build_in_test
 
 
 def load_data(
@@ -49,10 +50,18 @@ def load_data(
     if path_to_train_data is not None:
         try:
             if is_augmentation:
-                # Replace this string if you want to use build in datasets
-                train_data = ImageFolder(
-                    root=path_to_train_data, transform=augmented_data_transform
-                )
+                if not is_use_build_in_train:
+                    train_data = ImageFolder(
+                        root=path_to_train_data, transform=augmented_data_transform
+                    )
+                else:
+                    # Replace this string if you want to use build in datasets
+                    train_data = FGVCAircraft(
+                        root="data/",
+                        split="train",
+                        transform=augmented_data_transform,
+                        download=True,
+                    )
                 train_data_loader = DataLoader(
                     train_data,
                     batch_size=train_batch_size,
@@ -61,9 +70,19 @@ def load_data(
                     drop_last=True,
                 )
             else:
-                train_data = ImageFolder(
-                    root=path_to_train_data, transform=default_data_transform
-                )
+                if not is_use_build_in_test:
+                    train_data = ImageFolder(
+                        root=path_to_train_data, transform=default_data_transform
+                    )
+                else:
+                    # Replace this string if you want to use build in datasets
+                    train_data = FGVCAircraft(
+                        root="data/",
+                        split="train",
+                        transform=default_data_transform,
+                        download=True,
+                    )
+
                 train_data_loader = DataLoader(
                     train_data,
                     batch_size=train_batch_size,
@@ -77,10 +96,17 @@ def load_data(
         train_data_loader = None
     if path_to_test_data is not None:
         try:
-            # Replace this string if you want to use build in datasets
-            test_data = ImageFolder(
-                root=path_to_test_data, transform=default_data_transform
-            )
+            if not is_use_build_in_test:
+                test_data = ImageFolder(
+                    root=path_to_test_data, transform=default_data_transform
+                )
+            else:
+                test_data = FGVCAircraft(
+                    root="data/",
+                    split="test",
+                    transform=default_data_transform,
+                    download=True,
+                )
             test_data_loader = DataLoader(
                 test_data,
                 batch_size=test_batch_size,

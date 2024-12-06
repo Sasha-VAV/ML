@@ -54,13 +54,13 @@ def train_model(
         return
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(vit.parameters(), lr=0.005)
-
+    """
     scheduler = optim.lr_scheduler.OneCycleLR(
         optimizer=optimizer,
         max_lr=0.01,
         steps_per_epoch=len(train_data_loader) * batch_size,
         epochs=epochs,
-    )
+    )"""
 
     try:
         vit.load_state_dict(torch.load(path_to_nn_params, weights_only=True))
@@ -101,7 +101,7 @@ def train_model(
             loss = criterion(outputs, labels)
             loss.backward()
             optimizer.step()
-            scheduler.step()
+            # scheduler.step()
 
             # print statistics
             running_loss += loss.item()
@@ -126,6 +126,8 @@ def train_model(
             if i * batch_size >= max_number_of_train_samples:
                 break
 
+        torch.save(vit.state_dict(), path_to_nn_params)
+
         accuracy = -1
         if test_data_loader is not None:
             accuracy = test_model(
@@ -139,7 +141,7 @@ def train_model(
 
         console_log, wandb_log = log_data(
             epoch=epoch + 1,
-            lr=scheduler.get_last_lr()[0],
+            lr=0.005,  # scheduler.get_last_lr()[0],
             train_loss=total_loss / len(train_data_loader),
             val_loss=val_loss / val_samples,
             val_acc=val_correct / (val_samples * batch_size) * 100,
