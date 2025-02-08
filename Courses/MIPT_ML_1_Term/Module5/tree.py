@@ -274,6 +274,8 @@ class DecisionTree(BaseEstimator):
             else:
                 if y_subset.shape[0] == 0:
                     raise ValueError("y_subset is empty")
+                if self.criterion_name == 'mad_median':
+                    return np.median(y_subset)
                 return np.mean(y_subset)
         feature_index, threshold = self.choose_best_split(X_subset, y_subset)
         new_node = Node(feature_index, threshold)
