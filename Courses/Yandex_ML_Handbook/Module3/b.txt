@@ -1,0 +1,1 @@
+n_mentions,n_urls,tfidf_actually,tfidf_area,tfidf_art,tfidf_color,tfidf_complete,tfidf_cybertruck,tfidf_day,tfidf_free,tfidf_game,tfidf_going,tfidf_happy,tfidf_home,tfidf_https,tfidf_insane,tfidf_life,tfidf_long,tfidf_oxygen,tfidf_simulation,tfidf_sounds,tfidf_travel,tfidf_video,tfidf_yes,MONTH_3,MONTH_4,MONTH_6,MONTH_7,MONTH_9,DAY_17,DAY_23,HOUR_1,HOUR_22,intercept
