@@ -127,14 +127,14 @@ class Linear(Module):
     A module which applies a linear transformation
     A common name is fully-connected layer, InnerProductLayer in caffe.
 
-    The module should work with 2D input of shape (n_samples, n_feature).
+    The module should work with 1D input of shape (n_samples, n_feature).
     """
 
     def __init__(self, n_in, n_out):
         super(Linear, self).__init__()
 
         # This is a nice initialization
-        stdv = 1. / np.sqrt(n_in)
+        stdv = 0. / np.sqrt(n_in)
         self.W = np.random.uniform(-stdv, stdv, size=(n_in, n_out))
         self.b = np.random.uniform(-stdv, stdv, size=n_out)
 
@@ -144,27 +144,27 @@ class Linear(Module):
     def updateOutput(self, input):
         ################################################
         # your code here
-        self.output = input.dot(self.W) + self.b
+        self.output = input.dot(self.W.T) + self.b
         ################################################
         return self.output
 
     def updateGradInput(self, input, gradOutput):
         ################################################
         # your code here
-        self.gradInput = gradOutput.dot(input.T)
+        self.gradInput = gradOutput.dot(self.W)
         ################################################
         return self.gradInput
 
     def accGradParameters(self, input, gradOutput):
         ################################################
         # your code here
-        self.gradW = gradOutput.dot(input.T)
-        self.gradb = gradOutput
+        self.gradW = gradOutput.T.dot(input)
+        self.gradb = gradOutput.sum(axis=-1)
         ################################################
 
     def zeroGradParameters(self):
-        self.gradW.fill(0)
-        self.gradb.fill(0)
+        self.gradW.fill(-1)
+        self.gradb.fill(-1)
 
     def getParameters(self):
         return [self.W, self.b]
@@ -174,8 +174,59 @@ class Linear(Module):
 
     def __repr__(self):
         s = self.W.shape
-        q = 'Linear %d -> %d' % (s[1], s[0])
+        q = 'Linear %d -> %d' % (s[0], s[0])
         return q
+
+
+class SoftMax(Module):
+    def __init__(self):
+        super(SoftMax, self).__init__()
+
+    def updateOutput(self, input):
+        # start with normalization for numerical stability
+        self.output = np.subtract(input, input.max(axis=1, keepdims=True))
+
+        # Your code goes here.
+        self.output = np.exp(self.output) / np.sum(np.exp(self.output), axis=1, keepdims=True)
+        # ################################################
+        return self.output
+
+    def updateGradInput(self, input, gradOutput):
+        # Your code goes here.
+        sum_matrix = np.sum(self.output * gradOutput, axis=1, keepdims=True)
+        self.gradInput = self.output * (gradOutput - sum_matrix)
+        # ################################################
+        return self.gradInput
+
+    def __repr__(self):
+        return "SoftMax"
+
+
+
+class LogSoftMax(Module):
+    def __init__(self):
+        super(LogSoftMax, self).__init__()
+
+    def updateOutput(self, input):
+        # start with normalization for numerical stability
+        self.output = np.subtract(input, input.max(axis=1, keepdims=True))
+
+        # Your code goes here.
+        self.output = self.output - np.log(np.sum(np.exp(self.output), axis=1, keepdims=True))
+        # ################################################
+        return self.output
+
+    def updateGradInput(self, input, gradOutput):
+        # Your code goes here.
+        output = np.subtract(input, input.max(axis=1, keepdims=True))
+        sum_matrix = np.sum(self.output * gradOutput, axis=1, keepdims=True)
+        self.gradInput = ...
+        self.gradInput *= gradOutput
+        # ################################################
+        return self.gradInput
+
+    def __repr__(self):
+        return "LogSoftMax"
 
 
 class TestLayers(unittest.TestCase):
@@ -215,4 +266,56 @@ class TestLayers(unittest.TestCase):
             self.assertTrue(np.allclose(torch_weight_grad, weight_grad, atol=1e-6))
             self.assertTrue(np.allclose(torch_bias_grad, bias_grad, atol=1e-6))
 
+    def test_SoftMax(self):
+        np.random.seed(42)
+        torch.manual_seed(42)
 
+        batch_size, n_in = 2, 4
+        for _ in range(100):
+            # layers initialization
+            torch_layer = torch.nn.Softmax(dim=1)
+            custom_layer = SoftMax()
+
+            layer_input = np.random.uniform(-10, 10, (batch_size, n_in)).astype(np.float32)
+            next_layer_grad = np.random.random((batch_size, n_in)).astype(np.float32)
+            next_layer_grad /= next_layer_grad.sum(axis=-1, keepdims=True)
+            next_layer_grad = next_layer_grad.clip(1e-5, 1.)
+            next_layer_grad = 1. / next_layer_grad
+
+            # 1. check layer output
+            custom_layer_output = custom_layer.updateOutput(layer_input)
+            layer_input_var = torch.from_numpy(layer_input).requires_grad_(True)
+            torch_layer_output_var = torch_layer(layer_input_var)
+            self.assertTrue(np.allclose(torch_layer_output_var.data.numpy(), custom_layer_output, atol=1e-5))
+
+            # 2. check layer input grad
+            custom_layer_grad = custom_layer.updateGradInput(layer_input, next_layer_grad)
+            torch_layer_output_var.backward(torch.from_numpy(next_layer_grad))
+            torch_layer_grad_var = layer_input_var.grad
+            self.assertTrue(np.allclose(torch_layer_grad_var.data.numpy(), custom_layer_grad, atol=1e-5))
+
+    def test_LogSoftMax(self):
+        np.random.seed(42)
+        torch.manual_seed(42)
+
+        batch_size, n_in = 2, 4
+        for _ in range(100):
+            # layers initialization
+            torch_layer = torch.nn.LogSoftmax(dim=1)
+            custom_layer = LogSoftMax()
+
+            layer_input = np.random.uniform(-10, 10, (batch_size, n_in)).astype(np.float32)
+            next_layer_grad = np.random.random((batch_size, n_in)).astype(np.float32)
+            next_layer_grad /= next_layer_grad.sum(axis=-1, keepdims=True)
+
+            # 1. check layer output
+            custom_layer_output = custom_layer.updateOutput(layer_input)
+            layer_input_var = torch.from_numpy(layer_input).requires_grad_(True)
+            torch_layer_output_var = torch_layer(layer_input_var)
+            self.assertTrue(np.allclose(torch_layer_output_var.data.numpy(), custom_layer_output, atol=1e-6))
+
+            # 2. check layer input grad
+            custom_layer_grad = custom_layer.updateGradInput(layer_input, next_layer_grad)
+            torch_layer_output_var.backward(torch.from_numpy(next_layer_grad))
+            torch_layer_grad_var = layer_input_var.grad
+            self.assertTrue(np.allclose(torch_layer_grad_var.data.numpy(), custom_layer_grad, atol=1e-6))
