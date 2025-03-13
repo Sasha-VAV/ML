@@ -159,7 +159,7 @@ class Linear(Module):
         ################################################
         # your code here
         self.gradW = gradOutput.T.dot(input)
-        self.gradb = gradOutput.sum(axis=-1)
+        self.gradb = gradOutput.sum(0)
         ################################################
 
     def zeroGradParameters(self):
@@ -202,7 +202,6 @@ class SoftMax(Module):
         return "SoftMax"
 
 
-
 class LogSoftMax(Module):
     def __init__(self):
         super(LogSoftMax, self).__init__()
@@ -218,15 +217,52 @@ class LogSoftMax(Module):
 
     def updateGradInput(self, input, gradOutput):
         # Your code goes here.
-        output = np.subtract(input, input.max(axis=1, keepdims=True))
-        sum_matrix = np.sum(self.output * gradOutput, axis=1, keepdims=True)
-        self.gradInput = ...
-        self.gradInput *= gradOutput
+        # output = np.subtract(input, input.max(axis=1, keepdims=True))
+        # output = np.exp(output) / np.sum(np.exp(output), axis=1, keepdims=True)
+        output = np.exp(self.output)
+        self.gradInput = gradOutput - output * np.sum(gradOutput, axis=1, keepdims=True)
         # ################################################
         return self.gradInput
 
     def __repr__(self):
         return "LogSoftMax"
+
+
+class BatchNormalization(Module):
+    EPS = 1e-3
+
+    def __init__(self, alpha=0.):
+        super(BatchNormalization, self).__init__()
+        self.alpha = alpha
+        self.moving_mean = None
+        self.moving_variance = None
+
+    def updateOutput(self, input):
+        # Your code goes here.
+        if self.moving_mean is None and self.moving_variance is None:
+            self.moving_mean = np.mean(input, axis=0)
+            self.moving_variance = np.var(input, axis=0)
+        if self.training:
+            batch_mean = np.mean(input, axis=0)
+            batch_var = np.var(input, axis=0)
+            self.moving_mean = self.alpha * self.moving_mean + (1 - self.alpha) * batch_mean
+            self.moving_variance = self.alpha * self.moving_variance + (1 - self.alpha) * batch_var
+            self.output = (input - batch_mean) / np.sqrt(batch_var + self.EPS)
+        else:
+            self.output = (input - self.moving_mean) / np.sqrt(self.moving_variance + self.EPS)
+        # ################################################
+        # use self.EPS please
+        return self.output
+
+    def updateGradInput(self, input, gradOutput):
+        # Your code goes here.
+        print(input.shape, gradOutput.shape)
+
+        # ################################################
+        return self.gradInput
+
+    def __repr__(self):
+        return "BatchNormalization"
 
 
 class TestLayers(unittest.TestCase):
@@ -319,3 +355,49 @@ class TestLayers(unittest.TestCase):
             torch_layer_output_var.backward(torch.from_numpy(next_layer_grad))
             torch_layer_grad_var = layer_input_var.grad
             self.assertTrue(np.allclose(torch_layer_grad_var.data.numpy(), custom_layer_grad, atol=1e-6))
+
+    def test_BatchNormalization(self):
+        np.random.seed(42)
+        torch.manual_seed(42)
+
+        batch_size, n_in = 32, 16
+        for _ in range(100):
+            # layers initialization
+            slope = np.random.uniform(0.01, 0.05)
+            alpha = 0.9
+            custom_layer = BatchNormalization(alpha)
+            custom_layer.train()
+            torch_layer = torch.nn.BatchNorm1d(n_in, eps=custom_layer.EPS, momentum=1. - alpha, affine=False)
+            custom_layer.moving_mean = torch_layer.running_mean.numpy().copy()
+            custom_layer.moving_variance = torch_layer.running_var.numpy().copy()
+
+            layer_input = np.random.uniform(-5, 5, (batch_size, n_in)).astype(np.float32)
+            next_layer_grad = np.random.uniform(-5, 5, (batch_size, n_in)).astype(np.float32)
+
+            # 1. check layer output
+            custom_layer_output = custom_layer.updateOutput(layer_input)
+            layer_input_var = torch.from_numpy(layer_input).requires_grad_(True)
+            torch_layer_output_var = torch_layer(layer_input_var)
+            self.assertTrue(np.allclose(torch_layer_output_var.data.numpy(), custom_layer_output, atol=1e-6))
+
+            # 2. check layer input grad
+            custom_layer_grad = custom_layer.updateGradInput(layer_input, next_layer_grad)
+            torch_layer_output_var.backward(torch.from_numpy(next_layer_grad))
+            torch_layer_grad_var = layer_input_var.grad
+            # please, don't increase `atol` parameter, it's garanteed that you can implement batch norm layer
+            # with tolerance 1e-5
+            self.assertTrue(np.allclose(torch_layer_grad_var.data.numpy(), custom_layer_grad, atol=1e-5))
+
+            # 3. check moving mean
+            self.assertTrue(np.allclose(custom_layer.moving_mean, torch_layer.running_mean.numpy()))
+            # we don't check moving_variance because pytorch uses slightly different formula for it:
+            # it computes moving average for unbiased variance (i.e var*N/(N-1))
+            # self.assertTrue(np.allclose(custom_layer.moving_variance, torch_layer.running_var.numpy()))
+
+            # 4. check evaluation mode
+            custom_layer.moving_variance = torch_layer.running_var.numpy().copy()
+            custom_layer.evaluate()
+            custom_layer_output = custom_layer.updateOutput(layer_input)
+            torch_layer.eval()
+            torch_layer_output_var = torch_layer(layer_input_var)
+            self.assertTrue(np.allclose(torch_layer_output_var.data.numpy(), custom_layer_output, atol=1e-6))
