@@ -2,6 +2,7 @@ import unittest
 
 import numpy as np
 import torch
+from tqdm import tqdm
 
 
 class Module(object):
@@ -122,6 +123,7 @@ class Module(object):
         """
         return "Module"
 
+
 class Linear(Module):
     """
     A module which applies a linear transformation
@@ -178,6 +180,112 @@ class Linear(Module):
         return q
 
 
+class Sequential(Module):
+    """
+         This class implements a container, which processes `input` data sequentially.
+
+         `input` is processed by each module (layer) in self.modules consecutively.
+         The resulting array is called `output`.
+    """
+
+    def __init__(self):
+        super(Sequential, self).__init__()
+        self.modules = []
+
+    def add(self, module):
+        """
+        Adds a module to the container.
+        """
+        self.modules.append(module)
+
+    def updateOutput(self, input):
+        """
+        Basic workflow of FORWARD PASS:
+
+            y_0    = module[0].forward(input)
+            y_1    = module[1].forward(y_0)
+            ...
+            output = module[n-1].forward(y_{n-2})
+
+
+        Just write a little loop.
+        """
+
+        # Your code goes here.
+        self.output = self.modules[0].forward(input)
+        for module in self.modules[1:]:
+            self.output = module.forward(self.output)
+        # ################################################
+        return self.output
+
+    def backward(self, input, gradOutput):
+        """
+        Workflow of BACKWARD PASS:
+
+            g_{n-1} = module[n-1].backward(y_{n-2}, gradOutput)
+            g_{n-2} = module[n-2].backward(y_{n-3}, g_{n-1})
+            ...
+            g_1 = module[1].backward(y_0, g_2)
+            gradInput = module[0].backward(input, g_1)
+
+
+        !!!
+
+        To ech module you need to provide the input, module saw while forward pass,
+        it is used while computing gradients.
+        Make sure that the input for `i-th` layer the output of `module[i]` (just the same input as in forward pass)
+        and NOT `input` to this Sequential module.
+
+        !!!
+
+        """
+        # Your code goes here.
+        for i in range(len(self.modules) - 1, 0, -1):
+            gradOutput = self.modules[i].backward(self.modules[i-1].output, gradOutput)
+        self.gradInput = self.modules[0].backward(input, gradOutput)
+        # ################################################
+        return self.gradInput
+
+    def zeroGradParameters(self):
+        for module in self.modules:
+            module.zeroGradParameters()
+
+    def getParameters(self):
+        """
+        Should gather all parameters in a list.
+        """
+        return [x.getParameters() for x in self.modules]
+
+    def getGradParameters(self):
+        """
+        Should gather all gradients w.r.t parameters in a list.
+        """
+        return [x.getGradParameters() for x in self.modules]
+
+    def __repr__(self):
+        string = "".join([str(x) + '\n' for x in self.modules])
+        return string
+
+    def __getitem__(self, x):
+        return self.modules.__getitem__(x)
+
+    def train(self):
+        """
+        Propagates training parameter through all modules
+        """
+        self.training = True
+        for module in self.modules:
+            module.train()
+
+    def evaluate(self):
+        """
+        Propagates training parameter through all modules
+        """
+        self.training = False
+        for module in self.modules:
+            module.evaluate()
+
+
 class SoftMax(Module):
     def __init__(self):
         super(SoftMax, self).__init__()
@@ -217,8 +325,6 @@ class LogSoftMax(Module):
 
     def updateGradInput(self, input, gradOutput):
         # Your code goes here.
-        # output = np.subtract(input, input.max(axis=1, keepdims=True))
-        # output = np.exp(output) / np.sum(np.exp(output), axis=1, keepdims=True)
         output = np.exp(self.output)
         self.gradInput = gradOutput - output * np.sum(gradOutput, axis=1, keepdims=True)
         # ################################################
@@ -256,13 +362,134 @@ class BatchNormalization(Module):
 
     def updateGradInput(self, input, gradOutput):
         # Your code goes here.
-        print(input.shape, gradOutput.shape)
-
+        self.gradInput = gradOutput - np.mean(gradOutput, axis=0, keepdims=True)
+        self.gradInput -= self.output * np.mean(gradOutput * self.output, axis=0, keepdims=True)
+        self.gradInput /= np.sqrt(np.var(input, axis=0) + self.EPS)
         # ################################################
         return self.gradInput
 
     def __repr__(self):
         return "BatchNormalization"
+
+
+class ChannelwiseScaling(Module):
+    """
+       Implements linear transform of input y = gamma * x + beta
+       where gamma, beta - learnable vectors of length x.shape[-1]
+    """
+
+    def __init__(self, n_out):
+        super(ChannelwiseScaling, self).__init__()
+
+        stdv = 1. / np.sqrt(n_out)
+        self.gamma = np.random.uniform(-stdv, stdv, size=n_out)
+        self.beta = np.random.uniform(-stdv, stdv, size=n_out)
+
+        self.gradGamma = np.zeros_like(self.gamma)
+        self.gradBeta = np.zeros_like(self.beta)
+
+    def updateOutput(self, input):
+        self.output = input * self.gamma + self.beta
+        return self.output
+
+    def updateGradInput(self, input, gradOutput):
+        self.gradInput = gradOutput * self.gamma
+        return self.gradInput
+
+    def accGradParameters(self, input, gradOutput):
+        self.gradBeta = np.sum(gradOutput, axis=0)
+        self.gradGamma = np.sum(gradOutput * input, axis=0)
+
+    def zeroGradParameters(self):
+        self.gradGamma.fill(0)
+        self.gradBeta.fill(0)
+
+    def getParameters(self):
+        return [self.gamma, self.beta]
+
+    def getGradParameters(self):
+        return [self.gradGamma, self.gradBeta]
+
+    def __repr__(self):
+        return "ChannelwiseScaling"
+
+
+class Dropout(Module):
+    def __init__(self, p=0.5):
+        super(Dropout, self).__init__()
+
+        self.p = p
+        self.mask = None
+
+    def updateOutput(self, input):
+        # Your code goes here.
+        if self.training:
+            self.mask = np.random.rand(*input.shape) >= self.p
+            self.output = input * self.mask / (1 - self.p)
+        else:
+            self.output = input
+        # ################################################
+        return self.output
+
+    def updateGradInput(self, input, gradOutput):
+        # Your code goes here.
+        if self.training:
+            self.gradInput = gradOutput * self.mask / (1 - self.p)
+        else:
+            self.gradInput = gradOutput
+        # ################################################
+        return self.gradInput
+
+    def __repr__(self):
+        return "Dropout"
+
+
+class LeakyReLU(Module):
+    def __init__(self, slope=0.03):
+        super(LeakyReLU, self).__init__()
+
+        self.slope = slope
+
+    def updateOutput(self, input):
+        # Your code goes here.
+        self.mask = (input < 0) * (1 - self.slope)
+        self.output = input * (1 - self.mask)
+        # ################################################
+        return self.output
+
+    def updateGradInput(self, input, gradOutput):
+        # Your code goes here.
+        self.gradInput = (1 - self.mask) * gradOutput
+        # ################################################
+        return self.gradInput
+
+    def __repr__(self):
+        return "LeakyReLU"
+
+
+class ELU(Module):
+    def __init__(self, alpha=1.0):
+        super(ELU, self).__init__()
+
+        self.alpha = alpha
+
+    def updateOutput(self, input):
+        # Your code goes here.
+        self.mask = input <= 0
+        self.output = input.copy()
+        self.output[self.mask] = self.alpha * (np.exp(self.output[self.mask]) - 1)
+        # ################################################
+        return self.output
+
+    def updateGradInput(self, input, gradOutput):
+        # Your code goes here.
+        self.gradInput = gradOutput.copy()
+        self.gradInput[self.mask] *= self.alpha * np.exp(input[self.mask])
+        # ################################################
+        return self.gradInput
+
+    def __repr__(self):
+        return "ELU"
 
 
 class TestLayers(unittest.TestCase):
@@ -401,3 +628,158 @@ class TestLayers(unittest.TestCase):
             torch_layer.eval()
             torch_layer_output_var = torch_layer(layer_input_var)
             self.assertTrue(np.allclose(torch_layer_output_var.data.numpy(), custom_layer_output, atol=1e-6))
+
+    def test_Sequential(self):
+        np.random.seed(42)
+        torch.manual_seed(42)
+
+        batch_size, n_in = 2, 4
+        for _ in tqdm(range(100)):
+            # layers initialization
+            alpha = 0.9
+            torch_layer = torch.nn.BatchNorm1d(n_in, eps=BatchNormalization.EPS, momentum=1. - alpha, affine=True)
+            torch_layer.bias.data = torch.from_numpy(np.random.random(n_in).astype(np.float32))
+            custom_layer = Sequential()
+            bn_layer = BatchNormalization(alpha)
+            bn_layer.moving_mean = torch_layer.running_mean.numpy().copy()
+            bn_layer.moving_variance = torch_layer.running_var.numpy().copy()
+            custom_layer.add(bn_layer)
+            scaling_layer = ChannelwiseScaling(n_in)
+            scaling_layer.gamma = torch_layer.weight.data.numpy()
+            scaling_layer.beta = torch_layer.bias.data.numpy()
+            custom_layer.add(scaling_layer)
+            custom_layer.train()
+
+            layer_input = np.random.uniform(-5, 5, (batch_size, n_in)).astype(np.float32)
+            next_layer_grad = np.random.uniform(-5, 5, (batch_size, n_in)).astype(np.float32)
+
+            # 1. check layer output
+            custom_layer_output = custom_layer.updateOutput(layer_input)
+            layer_input_var = torch.from_numpy(layer_input).requires_grad_(True)
+            torch_layer_output_var = torch_layer(layer_input_var)
+            a = torch_layer_output_var.data.numpy()
+            self.assertTrue(np.allclose(torch_layer_output_var.data.numpy(), custom_layer_output, atol=5e-6))
+
+            # 2. check layer input grad
+            custom_layer_grad = custom_layer.backward(layer_input, next_layer_grad)
+            torch_layer_output_var.backward(torch.from_numpy(next_layer_grad))
+            torch_layer_grad_var = layer_input_var.grad
+            self.assertTrue(np.allclose(torch_layer_grad_var.data.numpy(), custom_layer_grad, atol=1e-5))
+
+            # 3. check layer parameters grad
+            weight_grad, bias_grad = custom_layer.getGradParameters()[1]
+            torch_weight_grad = torch_layer.weight.grad.data.numpy()
+            torch_bias_grad = torch_layer.bias.grad.data.numpy()
+            self.assertTrue(np.allclose(torch_weight_grad, weight_grad, atol=1e-6))
+            self.assertTrue(np.allclose(torch_bias_grad, bias_grad, atol=1e-6))
+
+    def test_Dropout(self):
+        np.random.seed(42)
+
+        batch_size, n_in = 2, 4
+        for _ in range(100):
+            # layers initialization
+            p = np.random.uniform(0.3, 0.7)
+            layer = Dropout(p)
+            layer.train()
+
+            layer_input = np.random.uniform(-5, 5, (batch_size, n_in)).astype(np.float32)
+            next_layer_grad = np.random.uniform(-5, 5, (batch_size, n_in)).astype(np.float32)
+
+            # 1. check layer output
+            layer_output = layer.updateOutput(layer_input)
+            self.assertTrue(np.all(np.logical_or(np.isclose(layer_output, 0),
+                                                 np.isclose(layer_output * (1. - p), layer_input))))
+
+            # 2. check layer input grad
+            layer_grad = layer.updateGradInput(layer_input, next_layer_grad)
+            self.assertTrue(np.all(np.logical_or(np.isclose(layer_grad, 0),
+                                                 np.isclose(layer_grad * (1. - p), next_layer_grad))))
+
+            # 3. check evaluation mode
+            layer.evaluate()
+            layer_output = layer.updateOutput(layer_input)
+            self.assertTrue(np.allclose(layer_output, layer_input))
+
+            # 4. check mask
+            p = 0.0
+            layer = Dropout(p)
+            layer.train()
+            layer_output = layer.updateOutput(layer_input)
+            self.assertTrue(np.allclose(layer_output, layer_input))
+
+            p = 0.5
+            layer = Dropout(p)
+            layer.train()
+            layer_input = np.random.uniform(5, 10, (batch_size, n_in)).astype(np.float32)
+            next_layer_grad = np.random.uniform(5, 10, (batch_size, n_in)).astype(np.float32)
+            layer_output = layer.updateOutput(layer_input)
+            zeroed_elem_mask = np.isclose(layer_output, 0)
+            layer_grad = layer.updateGradInput(layer_input, next_layer_grad)
+            self.assertTrue(np.all(zeroed_elem_mask == np.isclose(layer_grad, 0)))
+
+            # 5. dropout mask should be generated independently for every input matrix element, not for row/column
+            batch_size, n_in = 1000, 1
+            p = 0.8
+            layer = Dropout(p)
+            layer.train()
+
+            layer_input = np.random.uniform(5, 10, (batch_size, n_in)).astype(np.float32)
+            layer_output = layer.updateOutput(layer_input)
+            self.assertTrue(np.sum(np.isclose(layer_output, 0)) != layer_input.size)
+
+            layer_input = layer_input.T
+            layer_output = layer.updateOutput(layer_input)
+            self.assertTrue(np.sum(np.isclose(layer_output, 0)) != layer_input.size)
+
+    def test_LeakyReLU(self):
+        np.random.seed(42)
+        torch.manual_seed(42)
+
+        batch_size, n_in = 2, 4
+        for _ in range(100):
+            # layers initialization
+            slope = np.random.uniform(0.01, 0.05)
+            torch_layer = torch.nn.LeakyReLU(slope)
+            custom_layer = LeakyReLU(slope)
+
+            layer_input = np.random.uniform(-5, 5, (batch_size, n_in)).astype(np.float32)
+            next_layer_grad = np.random.uniform(-5, 5, (batch_size, n_in)).astype(np.float32)
+
+            # 1. check layer output
+            custom_layer_output = custom_layer.updateOutput(layer_input)
+            layer_input_var = torch.from_numpy(layer_input).requires_grad_(True)
+            torch_layer_output_var = torch_layer(layer_input_var)
+            self.assertTrue(np.allclose(torch_layer_output_var.data.numpy(), custom_layer_output, atol=1e-6))
+
+            # 2. check layer input grad
+            custom_layer_grad = custom_layer.updateGradInput(layer_input, next_layer_grad)
+            torch_layer_output_var.backward(torch.from_numpy(next_layer_grad))
+            torch_layer_grad_var = layer_input_var.grad
+            self.assertTrue(np.allclose(torch_layer_grad_var.data.numpy(), custom_layer_grad, atol=1e-6))
+
+    def test_ELU(self):
+        np.random.seed(42)
+        torch.manual_seed(42)
+
+        batch_size, n_in = 2, 4
+        for _ in range(100):
+            # layers initialization
+            alpha = 1.0
+            torch_layer = torch.nn.ELU(alpha)
+            custom_layer = ELU(alpha)
+
+            layer_input = np.random.uniform(-5, 5, (batch_size, n_in)).astype(np.float32)
+            next_layer_grad = np.random.uniform(-5, 5, (batch_size, n_in)).astype(np.float32)
+
+            # 1. check layer output
+            custom_layer_output = custom_layer.updateOutput(layer_input)
+            layer_input_var = torch.from_numpy(layer_input).requires_grad_(True)
+            torch_layer_output_var = torch_layer(layer_input_var)
+            self.assertTrue(np.allclose(torch_layer_output_var.data.numpy(), custom_layer_output, atol=1e-6))
+
+            # 2. check layer input grad
+            custom_layer_grad = custom_layer.updateGradInput(layer_input, next_layer_grad)
+            torch_layer_output_var.backward(torch.from_numpy(next_layer_grad))
+            torch_layer_grad_var = layer_input_var.grad
+            self.assertTrue(np.allclose(torch_layer_grad_var.data.numpy(), custom_layer_grad, atol=1e-6))
