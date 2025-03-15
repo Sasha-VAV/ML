@@ -1,12 +1,14 @@
 import math
 
 import numpy as np
+
 """
 Credits: the original code belongs to Stanford CS231n course assignment1. Source link: http://cs231n.github.io/assignments2019/assignment1/
 """
 
+
 class KNearestNeighbor:
-    """ a kNN classifier with L2 distance """
+    """a kNN classifier with L2 distance"""
 
     def __init__(self):
         pass
@@ -47,7 +49,7 @@ class KNearestNeighbor:
         elif num_loops == 2:
             dists = self.compute_distances_two_loops(X)
         else:
-            raise ValueError('Invalid value %d for num_loops' % num_loops)
+            raise ValueError("Invalid value %d for num_loops" % num_loops)
 
         return self.predict_labels(dists, k=k)
 
@@ -131,8 +133,8 @@ class KNearestNeighbor:
         #       and two broadcast sums.                                         #
         #########################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-        a = np.sum(X ** 2, axis=1, keepdims=True)
-        b = np.sum(self.X_train ** 2, axis=1, keepdims=True)
+        a = np.sum(X**2, axis=1, keepdims=True)
+        b = np.sum(self.X_train**2, axis=1, keepdims=True)
         dists = np.sqrt(a + b.T - 2 * np.dot(X, self.X_train.T))
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         return dists

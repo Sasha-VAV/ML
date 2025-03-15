@@ -7,7 +7,11 @@ from sklearn.model_selection import train_test_split
 
 
 def load_notmnist(
-    path="./notMNIST_small", letters="ABCDEFGHIJ", img_shape=(28, 28), test_size=0.25, one_hot=False
+    path="./notMNIST_small",
+    letters="ABCDEFGHIJ",
+    img_shape=(28, 28),
+    test_size=0.25,
+    one_hot=False,
 ):
 
     # download data if it's missing. If you have any problems, go to the urls and load it manually.
@@ -45,7 +49,9 @@ def load_notmnist(
     labels = np.array(list(map(letter_to_i.get, labels)))
 
     if one_hot:
-        labels = (np.arange(np.max(labels) + 1)[None, :] == labels[:, None]).astype("float32")
+        labels = (np.arange(np.max(labels) + 1)[None, :] == labels[:, None]).astype(
+            "float32"
+        )
 
     # split into train/test
     X_train, X_test, y_train, y_test = train_test_split(

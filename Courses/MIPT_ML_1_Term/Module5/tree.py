@@ -42,7 +42,7 @@ def gini(y):
 
     # YOUR CODE HERE
 
-    return 1 - np.sum(p ** 2)
+    return 1 - np.sum(p**2)
 
 
 def variance(y):
@@ -88,7 +88,7 @@ def mad_median(y):
 
 def one_hot_encode(n_classes, y):
     y_one_hot = np.zeros((len(y), n_classes), dtype=float)
-    y_one_hot[np.arange(len(y)), y.astype(int)[:, 0]] = 1.
+    y_one_hot[np.arange(len(y)), y.astype(int)[:, 0]] = 1.0
     return y_one_hot
 
 
@@ -111,23 +111,31 @@ class Node:
 
 class DecisionTree(BaseEstimator):
     all_criterions = {
-        'gini': (gini, True),  # (criterion, classification flag)
-        'entropy': (entropy, True),
-        'variance': (variance, False),
-        'mad_median': (mad_median, False)
+        "gini": (gini, True),  # (criterion, classification flag)
+        "entropy": (entropy, True),
+        "variance": (variance, False),
+        "mad_median": (mad_median, False),
     }
 
-    def __init__(self, n_classes=None, max_depth=np.inf, min_samples_split=2,
-                 criterion_name='gini', debug=False):
+    def __init__(
+        self,
+        n_classes=None,
+        max_depth=np.inf,
+        min_samples_split=2,
+        criterion_name="gini",
+        debug=False,
+    ):
 
-        assert criterion_name in self.all_criterions.keys(), 'Criterion name must be on of the following: {}'.format(
-            self.all_criterions.keys())
+        assert (
+            criterion_name in self.all_criterions.keys()
+        ), "Criterion name must be on of the following: {}".format(
+            self.all_criterions.keys()
+        )
 
         self.n_classes = n_classes
         self.max_depth = max_depth
         self.min_samples_split = min_samples_split
         self.criterion_name = criterion_name
-
 
         self.depth = 0
         self.root = None  # Use the Node class to initialize it later
@@ -202,7 +210,9 @@ class DecisionTree(BaseEstimator):
         """
 
         # YOUR CODE HERE
-        (_, y_left), (_, y_right) = self.make_split(feature_index, threshold, X_subset, y_subset)
+        (_, y_left), (_, y_right) = self.make_split(
+            feature_index, threshold, X_subset, y_subset
+        )
 
         return y_left, y_right
 
@@ -235,10 +245,14 @@ class DecisionTree(BaseEstimator):
         for i in range(0, X_subset.shape[1]):
             threshold_arr = X_subset[:, i].copy()
             for j in range(0, X_subset.shape[0]):
-                y_left, y_right = self.make_split_only_y(i, threshold_arr[j], X_subset, y_subset)
+                y_left, y_right = self.make_split_only_y(
+                    i, threshold_arr[j], X_subset, y_subset
+                )
                 if y_left.shape[0] == 0 or y_right.shape[0] == 0:
                     continue
-                criterion = y_left.shape[0] * self.criterion(y_left) + y_right.shape[0] * self.criterion(y_right)
+                criterion = y_left.shape[0] * self.criterion(y_left) + y_right.shape[
+                    0
+                ] * self.criterion(y_right)
                 criterion /= y_subset.shape[0]
                 if min_criterion is None or criterion < min_criterion:
                     min_criterion = criterion
@@ -274,12 +288,14 @@ class DecisionTree(BaseEstimator):
             else:
                 if y_subset.shape[0] == 0:
                     raise ValueError("y_subset is empty")
-                if self.criterion_name == 'mad_median':
+                if self.criterion_name == "mad_median":
                     return np.median(y_subset)
                 return np.mean(y_subset)
         feature_index, threshold = self.choose_best_split(X_subset, y_subset)
         new_node = Node(feature_index, threshold)
-        (X_left, y_left), (X_right, y_right) = self.make_split(feature_index, threshold, X_subset, y_subset)
+        (X_left, y_left), (X_right, y_right) = self.make_split(
+            feature_index, threshold, X_subset, y_subset
+        )
 
         def copy():
             temp = DecisionTree(
@@ -315,7 +331,7 @@ class DecisionTree(BaseEstimator):
             Column vector of class labels in classification or target values in regression
 
         """
-        assert len(y.shape) == 2 and len(y) == len(X), 'Wrong y shape'
+        assert len(y.shape) == 2 and len(y) == len(X), "Wrong y shape"
         self.criterion, self.classification = self.all_criterions[self.criterion_name]
         if self.classification:
             if self.n_classes is None:
@@ -345,7 +361,11 @@ class DecisionTree(BaseEstimator):
         y_predicted = np.zeros((X.shape[0], 1))
         for i in range(X.shape[0]):
             temp = self.root
-            while isinstance(temp, Node) and temp.left_child is not None and temp.right_child is not None:
+            while (
+                isinstance(temp, Node)
+                and temp.left_child is not None
+                and temp.right_child is not None
+            ):
                 if X[i, temp.feature_index] < temp.value:
                     temp = temp.left_child
                 else:
@@ -372,13 +392,17 @@ class DecisionTree(BaseEstimator):
             Probabilities of each class for the provided objects
 
         """
-        assert self.classification, 'Available only for classification problem'
+        assert self.classification, "Available only for classification problem"
 
         # YOUR CODE HERE
         y_predicted_probs = np.zeros((X.shape[0], self.n_classes))
         for i in range(X.shape[0]):
             temp = self.root
-            while isinstance(temp, Node) and temp.left_child is not None and temp.right_child is not None:
+            while (
+                isinstance(temp, Node)
+                and temp.left_child is not None
+                and temp.right_child is not None
+            ):
                 if X[i, temp.feature_index] < temp.value:
                     temp = temp.left_child
                 else:
