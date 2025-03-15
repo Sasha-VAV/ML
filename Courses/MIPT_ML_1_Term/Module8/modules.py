@@ -492,6 +492,183 @@ class ELU(Module):
         return "ELU"
 
 
+class SoftPlus(Module):
+    def __init__(self):
+        super(SoftPlus, self).__init__()
+
+    def updateOutput(self, input):
+        # Your code goes here.
+        self.output = np.log(1 + np.exp(input))
+        # ################################################
+        return self.output
+
+    def updateGradInput(self, input, gradOutput):
+        # Your code goes here.
+        self.gradInput = gradOutput / (1 + np.exp(-input))
+        # ################################################
+        return self.gradInput
+
+    def __repr__(self):
+        return "SoftPlus"
+
+
+class Criterion(object):
+    def __init__(self):
+        self.output = None
+        self.gradInput = None
+
+    def forward(self, input, target):
+        """
+            Given an input and a target, compute the loss function
+            associated to the criterion and return the result.
+
+            For consistency this function should not be overrided,
+            all the code goes in `updateOutput`.
+        """
+        return self.updateOutput(input, target)
+
+    def backward(self, input, target):
+        """
+            Given an input and a target, compute the gradients of the loss function
+            associated to the criterion and return the result.
+
+            For consistency this function should not be overrided,
+            all the code goes in `updateGradInput`.
+        """
+        return self.updateGradInput(input, target)
+
+    def updateOutput(self, input, target):
+        """
+        Function to override.
+        """
+        return self.output
+
+    def updateGradInput(self, input, target):
+        """
+        Function to override.
+        """
+        return self.gradInput
+
+    def __repr__(self):
+        """
+        Pretty printing. Should be overrided in every module if you want
+        to have readable description.
+        """
+        return "Criterion"
+
+
+class MSECriterion(Criterion):
+    def __init__(self):
+        super(MSECriterion, self).__init__()
+
+    def updateOutput(self, input, target):
+        self.output = np.sum(np.power(input - target, 2)) / input.shape[0]
+        return self.output
+
+    def updateGradInput(self, input, target):
+        self.gradInput = (input - target) * 2 / input.shape[0]
+        return self.gradInput
+
+    def __repr__(self):
+        return "MSECriterion"
+
+
+class ClassNLLCriterionUnstable(Criterion):
+    EPS = 1e-15
+
+    def __init__(self):
+        a = super(ClassNLLCriterionUnstable, self)
+        super(ClassNLLCriterionUnstable, self).__init__()
+
+    def updateOutput(self, input, target):
+        # Use this trick to avoid numerical errors
+        input_clamp = np.clip(input, self.EPS, 1 - self.EPS)
+
+        # Your code goes here.
+        self.output = -np.mean(np.sum(target * np.log(input_clamp), axis=1))
+        # ################################################
+        return self.output
+
+    def updateGradInput(self, input, target):
+        # Use this trick to avoid numerical errors
+        input_clamp = np.clip(input, self.EPS, 1 - self.EPS)
+
+        # Your code goes here.
+        self.gradInput = -target / input_clamp / input.shape[0]
+        # ################################################
+        return self.gradInput
+
+    def __repr__(self):
+        return "ClassNLLCriterionUnstable"
+
+
+class ClassNLLCriterion(Criterion):
+    def __init__(self):
+        a = super(ClassNLLCriterion, self)
+        super(ClassNLLCriterion, self).__init__()
+
+    def updateOutput(self, input, target):
+        # Your code goes here.
+        self.output = -np.mean(np.sum(target * input, axis=1))
+        # ################################################
+        return self.output
+
+    def updateGradInput(self, input, target):
+        # Your code goes here.
+        self.gradInput = -target / input.shape[0]
+        # ################################################
+        return self.gradInput
+
+    def __repr__(self):
+        return "ClassNLLCriterion"
+
+
+def sgd_momentum(variables, gradients, config, state):
+    # 'variables' and 'gradients' have complex structure, accumulated_grads will be stored in a simpler one
+    state.setdefault('accumulated_grads', {})
+
+    var_index = 0
+    for current_layer_vars, current_layer_grads in zip(variables, gradients):
+        for current_var, current_grad in zip(current_layer_vars, current_layer_grads):
+            old_grad = state['accumulated_grads'].setdefault(var_index, np.zeros_like(current_grad))
+
+            np.add(config['momentum'] * old_grad, config['learning_rate'] * current_grad, out=old_grad)
+
+            current_var -= old_grad
+            var_index += 1
+
+
+def adam_optimizer(variables, gradients, config, state):
+    # 'variables' and 'gradients' have complex structure, accumulated_grads will be stored in a simpler one
+    state.setdefault('m', {})  # first moment vars
+    state.setdefault('v', {})  # second moment vars
+    state.setdefault('t', 0)  # timestamp
+    state['t'] += 1
+    for k in ['learning_rate', 'beta1', 'beta2', 'epsilon']:
+        assert k in config, config.keys()
+
+    var_index = 0
+    lr_t = config['learning_rate'] * np.sqrt(1 - config['beta2'] ** state['t']) / (1 - config['beta1'] ** state['t'])
+    for current_layer_vars, current_layer_grads in zip(variables, gradients):
+        for current_var, current_grad in zip(current_layer_vars, current_layer_grads):
+            var_first_moment = state['m'].setdefault(var_index, np.zeros_like(current_grad))
+            var_second_moment = state['v'].setdefault(var_index, np.zeros_like(current_grad))
+
+            # <YOUR CODE> #######################################
+            np.add(config['beta1'] * var_first_moment, (1 - config['beta1']) * current_grad, out=var_first_moment)
+            np.add(config['beta2'] * var_second_moment, (1 - config['beta2']) * current_grad**2, out=var_second_moment)
+            current_var -= lr_t * var_first_moment / (np.sqrt(var_second_moment) + config['epsilon'])
+            # update `current_var_first_moment`, `var_second_moment` and `current_var` values
+            # np.add(... , out=var_first_moment)
+            # np.add(... , out=var_second_moment)
+            # current_var -= ...
+
+            # small checks that you've updated the state; use np.add for rewriting np.arrays values
+            assert var_first_moment is state['m'].get(var_index)
+            assert var_second_moment is state['v'].get(var_index)
+            var_index += 1
+
+
 class TestLayers(unittest.TestCase):
     def test_Linear(self):
         np.random.seed(42)
@@ -783,3 +960,113 @@ class TestLayers(unittest.TestCase):
             torch_layer_output_var.backward(torch.from_numpy(next_layer_grad))
             torch_layer_grad_var = layer_input_var.grad
             self.assertTrue(np.allclose(torch_layer_grad_var.data.numpy(), custom_layer_grad, atol=1e-6))
+
+    def test_SoftPlus(self):
+        np.random.seed(42)
+        torch.manual_seed(42)
+
+        batch_size, n_in = 2, 4
+        for _ in range(100):
+            # layers initialization
+            torch_layer = torch.nn.Softplus()
+            custom_layer = SoftPlus()
+
+            layer_input = np.random.uniform(-5, 5, (batch_size, n_in)).astype(np.float32)
+            next_layer_grad = np.random.uniform(-5, 5, (batch_size, n_in)).astype(np.float32)
+
+            # 1. check layer output
+            custom_layer_output = custom_layer.updateOutput(layer_input)
+            layer_input_var = torch.from_numpy(layer_input).requires_grad_(True)
+            torch_layer_output_var = torch_layer(layer_input_var)
+            self.assertTrue(np.allclose(torch_layer_output_var.data.numpy(), custom_layer_output, atol=1e-6))
+
+            # 2. check layer input grad
+            custom_layer_grad = custom_layer.updateGradInput(layer_input, next_layer_grad)
+            torch_layer_output_var.backward(torch.from_numpy(next_layer_grad))
+            torch_layer_grad_var = layer_input_var.grad
+            self.assertTrue(np.allclose(torch_layer_grad_var.data.numpy(), custom_layer_grad, atol=1e-6))
+
+    def test_ClassNLLCriterionUnstable(self):
+        np.random.seed(42)
+        torch.manual_seed(42)
+
+        batch_size, n_in = 2, 4
+        for _ in range(100):
+            # layers initialization
+            torch_layer = torch.nn.NLLLoss()
+            custom_layer = ClassNLLCriterionUnstable()
+
+            layer_input = np.random.uniform(0, 1, (batch_size, n_in)).astype(np.float32)
+            layer_input /= layer_input.sum(axis=-1, keepdims=True)
+            layer_input = layer_input.clip(custom_layer.EPS, 1. - custom_layer.EPS)  # unifies input
+            target_labels = np.random.choice(n_in, batch_size)
+            target = np.zeros((batch_size, n_in), np.float32)
+            target[np.arange(batch_size), target_labels] = 1  # one-hot encoding
+
+            # 1. check layer output
+            custom_layer_output = custom_layer.updateOutput(layer_input, target)
+            layer_input_var = torch.from_numpy(layer_input).requires_grad_(True)
+            torch_layer_output_var = torch_layer(
+                torch.log(layer_input_var),
+                torch.from_numpy(target_labels.astype(np.int64)))
+            self.assertTrue(np.allclose(torch_layer_output_var.data.numpy(), custom_layer_output, atol=1e-6))
+
+            # 2. check layer input grad
+            custom_layer_grad = custom_layer.updateGradInput(layer_input, target)
+            torch_layer_output_var.backward()
+            torch_layer_grad_var = layer_input_var.grad
+            self.assertTrue(np.allclose(torch_layer_grad_var.data.numpy(), custom_layer_grad, atol=1e-6))
+
+    def test_ClassNLLCriterion(self):
+        np.random.seed(42)
+        torch.manual_seed(42)
+
+        batch_size, n_in = 2, 4
+        for _ in range(100):
+            # layers initialization
+            torch_layer = torch.nn.NLLLoss()
+            custom_layer = ClassNLLCriterion()
+
+            layer_input = np.random.uniform(-5, 5, (batch_size, n_in)).astype(np.float32)
+            layer_input = torch.nn.LogSoftmax(dim=1)(torch.from_numpy(layer_input)).data.numpy()
+            target_labels = np.random.choice(n_in, batch_size)
+            target = np.zeros((batch_size, n_in), np.float32)
+            target[np.arange(batch_size), target_labels] = 1  # one-hot encoding
+
+            # 1. check layer output
+            custom_layer_output = custom_layer.updateOutput(layer_input, target)
+            layer_input_var = torch.from_numpy(layer_input).requires_grad_(True)
+            torch_layer_output_var = torch_layer(
+                layer_input_var,
+                torch.from_numpy(target_labels.astype(np.int64))
+            )
+            self.assertTrue(np.allclose(torch_layer_output_var.data.numpy(), custom_layer_output, atol=1e-6))
+
+            # 2. check layer input grad
+            custom_layer_grad = custom_layer.updateGradInput(layer_input, target)
+            torch_layer_output_var.backward()
+            torch_layer_grad_var = layer_input_var.grad
+            self.assertTrue(np.allclose(torch_layer_grad_var.data.numpy(), custom_layer_grad, atol=1e-6))
+
+    def test_adam_optimizer(self):
+        state = {}
+        config = {'learning_rate': 1e-3, 'beta1': 0.9, 'beta2': 0.999, 'epsilon': 1e-8}
+        variables = [[np.arange(10).astype(np.float64)]]
+        gradients = [[np.arange(10).astype(np.float64)]]
+        adam_optimizer(variables, gradients, config, state)
+        self.assertTrue(np.allclose(state['m'][0], np.array([0., 0.1, 0.2, 0.3, 0.4, 0.5,
+                                                             0.6, 0.7, 0.8, 0.9])))
+        self.assertTrue(np.allclose(state['v'][0], np.array([0., 0.001, 0.004, 0.009, 0.016, 0.025,
+                                                             0.036, 0.049, 0.064, 0.081])))
+        self.assertTrue(state['t'] == 1)
+        self.assertTrue(np.allclose(variables[0][0], np.array([0., 0.999, 1.999, 2.999, 3.999, 4.999,
+                                                               5.999, 6.999, 7.999, 8.999])))
+        adam_optimizer(variables, gradients, config, state)
+        self.assertTrue(np.allclose(state['m'][0], np.array([0., 0.19, 0.38, 0.57, 0.76, 0.95, 1.14,
+                                                             1.33, 1.52, 1.71])))
+        self.assertTrue(np.allclose(state['v'][0], np.array([0., 0.001999, 0.007996, 0.017991,
+                                                             0.031984, 0.049975, 0.071964, 0.097951,
+                                                             0.127936, 0.161919])))
+        self.assertTrue(state['t'] == 2)
+        self.assertTrue(np.allclose(variables[0][0], np.array([0., 0.998, 1.998, 2.998, 3.998, 4.998,
+                                                               5.998, 6.998, 7.998, 8.998])))
