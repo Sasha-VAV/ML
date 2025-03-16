@@ -2,8 +2,8 @@ import unittest
 
 import numpy as np
 import torch
+from scipy.signal import correlate2d, correlate
 from tqdm import tqdm
-from scipy.signal import correlate2d
 
 
 class Module(object):
@@ -439,7 +439,7 @@ class Dropout(Module):
     def updateOutput(self, input):
         # Your code goes here.
         if self.training:
-            self.mask = np.random.rand(*input.shape) >= self.p
+            self.mask = np.random.binomial(1, p=1-self.p, size=input.shape)
             self.output = input * self.mask / (1 - self.p)
         else:
             self.output = input
@@ -670,9 +670,6 @@ class Flatten(Module):
         return "Flatten"
 
 
-import scipy as sp
-import scipy.signal
-import skimage
 from einops import rearrange, repeat
 
 
@@ -681,8 +678,10 @@ class Conv2d(Module):
         super(Conv2d, self).__init__()
         assert kernel_size % 2 == 1, kernel_size
 
-        stdv = 1. / np.sqrt(in_channels)
-        self.W = np.random.uniform(-stdv, stdv, size=(out_channels, in_channels, kernel_size, kernel_size))
+        stdv = 1.0 / np.sqrt(in_channels)
+        self.W = np.random.uniform(
+            -stdv, stdv, size=(out_channels, in_channels, kernel_size, kernel_size)
+        )
         self.b = np.random.uniform(-stdv, stdv, size=(out_channels,))
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -699,11 +698,16 @@ class Conv2d(Module):
         # 3. add bias value
 
         # self.output = ...
-        self.output = np.zeros((input.shape[0], self.out_channels, input.shape[2], input.shape[3]))
+        self.output = np.zeros(
+            (input.shape[0], self.out_channels, input.shape[2], input.shape[3])
+        )
+        input = np.pad(input, ((0, 0), (0, 0), (pad_size, pad_size), (pad_size, pad_size)))
         for i in range(input.shape[0]):
             for j in range(self.out_channels):
-                for k in range(self.in_channels):
-                    self.output[i, j] += correlate2d(input[i, k], self.W[j, k], mode='same')
+                print(input[i].shape, self.W[j].shape)
+                self.output[i, j] = correlate(
+                    input[i], self.W[j], mode="valid"
+                )
                 self.output[i, j] += self.b[j]
 
         return self.output
@@ -720,7 +724,9 @@ class Conv2d(Module):
         for i in range(input.shape[0]):
             for j in range(self.in_channels):
                 for k in range(self.out_channels):
-                    self.gradInput[i, j] += correlate2d(gradOutput[i, k], flipped_weights[k, j], mode='same')
+                    self.gradInput[i, j] += correlate2d(
+                        gradOutput[i, k], flipped_weights[k, j], mode="same"
+                    )
 
         return self.gradInput
 
@@ -736,7 +742,11 @@ class Conv2d(Module):
         self.gradW = np.zeros_like(self.W)
         self.gradb = np.zeros_like(self.b)
         if pad_size > 0:
-            input_padded = np.pad(input, ((0, 0), (0, 0), (pad_size, pad_size), (pad_size, pad_size)), mode='constant')
+            input_padded = np.pad(
+                input,
+                ((0, 0), (0, 0), (pad_size, pad_size), (pad_size, pad_size)),
+                mode="constant",
+            )
         else:
             input_padded = input
 
@@ -745,7 +755,9 @@ class Conv2d(Module):
             for j in range(self.out_channels):
                 self.gradb[j] += np.sum(gradOutput[i, j])
                 for k in range(self.in_channels):
-                    self.gradW[j, k] += correlate2d(input_padded[i, k], gradOutput[i, j], mode='valid')
+                    self.gradW[j, k] += correlate2d(
+                        input_padded[i, k], gradOutput[i, j], mode="valid"
+                    )
 
         return self.gradW, self.gradb
 
@@ -761,7 +773,7 @@ class Conv2d(Module):
 
     def __repr__(self):
         s = self.W.shape
-        q = 'Conv2d %d -> %d' % (s[1], s[0])
+        q = "Conv2d %d -> %d" % (s[1], s[0])
         return q
 
 
@@ -780,8 +792,14 @@ class MaxPool2d(Module):
         # YOUR CODE #############################
         # self.output = ...
         # self.max_indices = ...
-        self.output = rearrange(input, 'b c (h k1) (w k2) -> b c h w (k1 k2)', b=input.shape[0],
-                                c=input.shape[1], k1=self.kernel_size, k2=self.kernel_size)
+        self.output = rearrange(
+            input,
+            "b c (h k1) (w k2) -> b c h w (k1 k2)",
+            b=input.shape[0],
+            c=input.shape[1],
+            k1=self.kernel_size,
+            k2=self.kernel_size,
+        )
         self.max_indices = np.argmax(self.output, axis=-1, keepdims=True)
         tmp = np.zeros_like(self.output)
         np.put_along_axis(tmp, self.max_indices, 1, axis=-1)
@@ -793,15 +811,21 @@ class MaxPool2d(Module):
         # YOUR CODE #############################
         # self.gradInput = ...
 
-        self.gradInput = repeat(gradOutput, 'b c h w -> b c h w k', k=self.kernel_size**2)
+        self.gradInput = repeat(
+            gradOutput, "b c h w -> b c h w k", k=self.kernel_size**2
+        )
         self.gradInput *= self.max_indices
-        self.gradInput = rearrange(self.gradInput, 'b c h w (k1 k2) -> b c (h k1) (w k2)',
-                                   k1=self.kernel_size, k2=self.kernel_size)
+        self.gradInput = rearrange(
+            self.gradInput,
+            "b c h w (k1 k2) -> b c (h k1) (w k2)",
+            k1=self.kernel_size,
+            k2=self.kernel_size,
+        )
 
         return self.gradInput
 
     def __repr__(self):
-        q = 'MaxPool2d, kern %d, stride %d' % (self.kernel_size, self.kernel_size)
+        q = "MaxPool2d, kern %d, stride %d" % (self.kernel_size, self.kernel_size)
         return q
 
 
@@ -1494,23 +1518,39 @@ class TestLayers(unittest.TestCase):
             # layers initialization
             torch_layer = torch.nn.Conv2d(n_in, n_out, kern_size, padding=1)
             custom_layer = Conv2d(n_in, n_out, kern_size)
-            custom_layer.W = torch_layer.weight.data.numpy()  # [n_out, n_in, kern, kern]
+            custom_layer.W = (
+                torch_layer.weight.data.numpy()
+            )  # [n_out, n_in, kern, kern]
             custom_layer.b = torch_layer.bias.data.numpy()
 
-            layer_input = np.random.uniform(-1, 1, (batch_size, n_in, h, w)).astype(np.float32)
-            next_layer_grad = np.random.uniform(-1, 1, (batch_size, n_out, h, w)).astype(np.float32)
+            layer_input = np.random.uniform(-1, 1, (batch_size, n_in, h, w)).astype(
+                np.float32
+            )
+            next_layer_grad = np.random.uniform(
+                -1, 1, (batch_size, n_out, h, w)
+            ).astype(np.float32)
 
             # 1. check layer output
             custom_layer_output = custom_layer.updateOutput(layer_input)
             layer_input_var = torch.from_numpy(layer_input).requires_grad_(True)
             torch_layer_output_var = torch_layer(layer_input_var)
-            self.assertTrue(np.allclose(torch_layer_output_var.data.numpy(), custom_layer_output, atol=1e-6))
+            self.assertTrue(
+                np.allclose(
+                    torch_layer_output_var.data.numpy(), custom_layer_output, atol=1e-6
+                )
+            )
 
             # 2. check layer input grad
-            custom_layer_grad = custom_layer.updateGradInput(layer_input, next_layer_grad)
+            custom_layer_grad = custom_layer.updateGradInput(
+                layer_input, next_layer_grad
+            )
             torch_layer_output_var.backward(torch.from_numpy(next_layer_grad))
             torch_layer_grad_var = layer_input_var.grad
-            self.assertTrue(np.allclose(torch_layer_grad_var.data.numpy(), custom_layer_grad, atol=1e-6))
+            self.assertTrue(
+                np.allclose(
+                    torch_layer_grad_var.data.numpy(), custom_layer_grad, atol=1e-6
+                )
+            )
 
             # 3. check layer parameters grad
             custom_layer.accGradParameters(layer_input, next_layer_grad)
@@ -1519,7 +1559,13 @@ class TestLayers(unittest.TestCase):
             torch_weight_grad = torch_layer.weight.grad.data.numpy()
             torch_bias_grad = torch_layer.bias.grad.data.numpy()
             # m = ~np.isclose(torch_weight_grad, weight_grad, atol=1e-5)
-            self.assertTrue(np.allclose(torch_weight_grad, weight_grad, atol=1e-6, ))
+            self.assertTrue(
+                np.allclose(
+                    torch_weight_grad,
+                    weight_grad,
+                    atol=1e-6,
+                )
+            )
             self.assertTrue(np.allclose(torch_bias_grad, bias_grad, atol=1e-6))
 
     def test_MaxPool2d(self):
@@ -1534,18 +1580,31 @@ class TestLayers(unittest.TestCase):
             torch_layer = torch.nn.MaxPool2d(kern_size)
             custom_layer = MaxPool2d(kern_size)
 
-            layer_input = np.random.uniform(-10, 10, (batch_size, n_in, h, w)).astype(np.float32)
-            next_layer_grad = np.random.uniform(-10, 10, (batch_size, n_in,
-                                                          h // kern_size, w // kern_size)).astype(np.float32)
+            layer_input = np.random.uniform(-10, 10, (batch_size, n_in, h, w)).astype(
+                np.float32
+            )
+            next_layer_grad = np.random.uniform(
+                -10, 10, (batch_size, n_in, h // kern_size, w // kern_size)
+            ).astype(np.float32)
 
             # 1. check layer output
             custom_layer_output = custom_layer.updateOutput(layer_input)
             layer_input_var = torch.from_numpy(layer_input).requires_grad_(True)
             torch_layer_output_var = torch_layer(layer_input_var)
-            self.assertTrue(np.allclose(torch_layer_output_var.data.numpy(), custom_layer_output, atol=1e-6))
+            self.assertTrue(
+                np.allclose(
+                    torch_layer_output_var.data.numpy(), custom_layer_output, atol=1e-6
+                )
+            )
 
             # 2. check layer input grad
-            custom_layer_grad = custom_layer.updateGradInput(layer_input, next_layer_grad)
+            custom_layer_grad = custom_layer.updateGradInput(
+                layer_input, next_layer_grad
+            )
             torch_layer_output_var.backward(torch.from_numpy(next_layer_grad))
             torch_layer_grad_var = layer_input_var.grad
-            self.assertTrue(np.allclose(torch_layer_grad_var.data.numpy(), custom_layer_grad, atol=1e-6))
+            self.assertTrue(
+                np.allclose(
+                    torch_layer_grad_var.data.numpy(), custom_layer_grad, atol=1e-6
+                )
+            )
