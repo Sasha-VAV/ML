@@ -143,7 +143,7 @@ class DecisionTree(BaseEstimator):
 
     def make_split(self, feature_index, threshold, X_subset, y_subset):
         """
-        Makes split of the provided data subset and target values using provided feature and threshold
+        Makes split of the provided breeds subset and target values using provided feature and threshold
 
         Parameters
         ----------
@@ -319,12 +319,12 @@ class DecisionTree(BaseEstimator):
 
     def fit(self, X, y):
         """
-        Fit the model from scratch using the provided data
+        Fit the model from scratch using the provided breeds
 
         Parameters
         ----------
         X : np.array of type float with shape (n_objects, n_features)
-            Feature matrix representing the data to train on
+            Feature matrix representing the breeds to train on
 
         y : np.array of type int with shape (n_objects, 1) in classification
                    of type float with shape (n_objects, 1) in regression
@@ -342,12 +342,12 @@ class DecisionTree(BaseEstimator):
 
     def predict(self, X):
         """
-        Predict the target value or class label  the model from scratch using the provided data
+        Predict the target value or class label  the model from scratch using the provided breeds
 
         Parameters
         ----------
         X : np.array of type float with shape (n_objects, n_features)
-            Feature matrix representing the data the predictions should be provided for
+            Feature matrix representing the breeds the predictions should be provided for
 
         Returns
         -------
@@ -379,12 +379,12 @@ class DecisionTree(BaseEstimator):
     def predict_proba(self, X):
         """
         Only for classification
-        Predict the class probabilities using the provided data
+        Predict the class probabilities using the provided breeds
 
         Parameters
         ----------
         X : np.array of type float with shape (n_objects, n_features)
-            Feature matrix representing the data the predictions should be provided for
+            Feature matrix representing the breeds the predictions should be provided for
 
         Returns
         -------

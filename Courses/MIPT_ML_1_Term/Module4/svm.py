@@ -25,7 +25,7 @@ def rbf(x_1, x_2, sigma=1.0):
 
 
 def hinge_loss(scores, labels):
-    """Mean loss for batch of objects"""
+    """Mean loss for x_batch of objects"""
     assert len(scores.shape) == 1
     assert len(labels.shape) == 1
     return torch.mean(torch.clamp(1 - scores * labels, 0))  ### YOUR CODE HERE
@@ -118,7 +118,7 @@ class SVM(BaseEstimator, ClassifierMixin):
         with torch.no_grad():
             batch = torch.from_numpy(batch).float()
             K = self.kernel_function(batch, self.X)
-            # compute the margin values for every object in the batch
+            # compute the margin values for every object in the x_batch
             return (K @ self.betas + self.bias).flatten()  ### YOUR CODE HERE
 
     def predict(self, batch):

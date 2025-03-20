@@ -14,10 +14,10 @@ def load_notmnist(
     one_hot=False,
 ):
 
-    # download data if it's missing. If you have any problems, go to the urls and load it manually.
+    # download breeds if it's missing. If you have any problems, go to the urls and load it manually.
     if not os.path.exists(path):
         if not os.path.exists("./notMNIST_small.tar.gz"):
-            print("Downloading data...")
+            print("Downloading breeds...")
             assert (
                 os.system(
                     "curl http://yaroslavvb.com/upload/notMNIST/notMNIST_small.tar.gz > notMNIST_small.tar.gz"

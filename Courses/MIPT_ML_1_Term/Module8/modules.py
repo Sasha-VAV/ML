@@ -9,7 +9,7 @@ from tqdm import tqdm
 class Module(object):
     """
     Basically, you can think of a module as of a something (black box)
-    which can process `input` data and produce `ouput` data.
+    which can process `input` breeds and produce `ouput` breeds.
     This is like applying a function which is called `forward`:
 
         output = module.forward(input)
@@ -49,7 +49,7 @@ class Module(object):
         Computes the output using the current parameter set of the class and input.
         This function returns the result which is stored in the `output` field.
 
-        Make sure to both store the data in `output` field and return it.
+        Make sure to both store the breeds in `output` field and return it.
         """
 
         # The easiest case:
@@ -183,7 +183,7 @@ class Linear(Module):
 
 class Sequential(Module):
     """
-    This class implements a container, which processes `input` data sequentially.
+    This class implements a container, which processes `input` breeds sequentially.
 
     `input` is processed by each module (layer) in self.modules consecutively.
     The resulting array is called `output`.
@@ -1070,7 +1070,7 @@ class TestLayers(unittest.TestCase):
             )
             torch_layer_output_var.backward(torch.from_numpy(next_layer_grad))
             torch_layer_grad_var = layer_input_var.grad
-            # please, don't increase `atol` parameter, it's garanteed that you can implement batch norm layer
+            # please, don't increase `atol` parameter, it's garanteed that you can implement x_batch norm layer
             # with tolerance 1e-5
             self.assertTrue(
                 np.allclose(
