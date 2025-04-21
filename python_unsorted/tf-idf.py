@@ -5,7 +5,7 @@ import math
 docs = [
     "I have a corgi and this corgi is amazing",
     "Not a good job, buddy",
-    "Give me a hand"
+    "Give me a hand corgi"
 ]
 tokens = []
 for doc in docs:
