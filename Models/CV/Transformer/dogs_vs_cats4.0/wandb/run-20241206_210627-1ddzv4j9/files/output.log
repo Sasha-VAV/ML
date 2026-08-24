@@ -1,0 +1,15 @@
+[1,  4000] loss: 0.33378
+[1,  8000] loss: 0.15614
+C:\Users\vav11\anaconda3\envs\Conda310\lib\site-packages\PIL\TiffImagePlugin.py:935: UserWarning: Truncated File Read
+  warnings.warn(str(msg))
+[1, 12000] loss: 0.13418
+[1, 16000] loss: 0.12193
+[1, 20000] loss: 0.11183
+1000 test samples. Accuracy: 99.6
+epoch: 1, lr: 0.00500, train_loss: 0.16102, test_acc: 99.60000
+Traceback (most recent call last):
+  File "D:\Backup\Less Important\My programs\Git\ML\Models\CV\Transformer\dogs_vs_cats4.0\dogs_vs_cats4\__main__.py", line 64, in <module>
+    train_model(
+  File "D:\Backup\Less Important\My programs\Git\ML\Models\CV\Transformer\dogs_vs_cats4.0\dogs_vs_cats4\dvc4_train\train.py", line 107, in train_model
+    running_loss += loss.item()
+KeyboardInterrupt

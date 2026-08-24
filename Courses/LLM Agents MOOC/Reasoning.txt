@@ -1,0 +1,10 @@
+Approaches to improve performance:
+1. Explain dependency
+2. Solve step by step
+3. Recall a related problem, and then solve this one
+4. Sample new answers and select the most common
+5. Ignore irrelevant context
+LLMs' cannot correct their reasoning, so
+6. Review your previous answer and find mistakes, then answer again
+But this could lead to changing right answers to the wrong ones.
+Model debating is worse then self consistency
