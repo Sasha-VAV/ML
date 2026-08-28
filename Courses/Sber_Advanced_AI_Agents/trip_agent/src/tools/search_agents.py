@@ -62,13 +62,16 @@ async def search_flights(
             content="Rejected: no destination confirmed yet — call confirm_destination first.",
             status="error",
             tool_call_id=tool_call_id,
+            name="search_flights",
         )
     result = await _flights_agent.ainvoke(
         {"messages": [{"role": "user", "content": request}]},
         config={"recursion_limit": 6},
     )
     status = "error" if _child_had_error(result["messages"]) else "success"
-    return ToolMessage(content=result["messages"][-1].content, status=status, tool_call_id=tool_call_id)
+    return ToolMessage(
+        content=result["messages"][-1].content, status=status, tool_call_id=tool_call_id, name="search_flights"
+    )
 
 
 @tool
@@ -85,10 +88,13 @@ async def search_hotels(
             content="Rejected: no destination confirmed yet — call confirm_destination first.",
             status="error",
             tool_call_id=tool_call_id,
+            name="search_hotels",
         )
     result = await _hotels_agent.ainvoke(
         {"messages": [{"role": "user", "content": request}]},
         config={"recursion_limit": 6},
     )
     status = "error" if _child_had_error(result["messages"]) else "success"
-    return ToolMessage(content=result["messages"][-1].content, status=status, tool_call_id=tool_call_id)
+    return ToolMessage(
+        content=result["messages"][-1].content, status=status, tool_call_id=tool_call_id, name="search_hotels"
+    )

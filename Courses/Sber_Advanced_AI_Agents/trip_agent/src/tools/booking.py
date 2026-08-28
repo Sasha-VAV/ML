@@ -49,11 +49,12 @@ async def book_trip(
             content=f"Rejected: cannot book yet — missing confirmed {', '.join(missing)}.",
             status="error",
             tool_call_id=tool_call_id,
+            name="book_trip",
         )
 
     payload = f"Booking {destination}, {dates}. Flight: {flight}. Hotel: {hotel}. Answer with either: y/N. \n -> "
     if input(payload).strip().lower() != "y":
-        return ToolMessage(content="Booking canceled by user.", tool_call_id=tool_call_id)
+        return ToolMessage(content="Booking canceled by user.", tool_call_id=tool_call_id, name="book_trip")
 
     idempotency_key = f"{destination}|{flight}|{hotel}"
     task = BookingTask(
@@ -79,6 +80,7 @@ async def book_trip(
                 f"Confirmation: {confirmation}"
             ),
             tool_call_id=tool_call_id,
+            name="book_trip",
         )
 
     reason = default_queue.dlq_reason(idempotency_key)
@@ -86,4 +88,5 @@ async def book_trip(
         content=f"Booking failed after retries and was moved to the dead-letter queue ({reason}). Tell the traveler booking is temporarily unavailable.",
         status="error",
         tool_call_id=tool_call_id,
+        name="book_trip",
     )

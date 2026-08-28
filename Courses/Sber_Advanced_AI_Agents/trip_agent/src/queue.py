@@ -43,6 +43,12 @@ class BookingQueue:
             return self._results[task.idempotency_key]
         return await providers.booking_provider.reserve(task.destination, task.dates, task.flight, task.hotel)
 
+    def _save_result(self, task: BookingTask, confirmation: str) -> None:
+        self._results[task.idempotency_key] = confirmation
+
+    def _ack(self, task: BookingTask) -> None:
+        self._acked.add(task.idempotency_key)
+
     async def run_worker_once(self) -> None:
         if not self._pending:
             return
@@ -58,8 +64,8 @@ class BookingQueue:
                 self.dlq.append(task)
             return
 
-        self._results[task.idempotency_key] = confirmation
-        self._acked.add(task.idempotency_key)
+        self._save_result(task, confirmation)
+        self._ack(task)
 
     def result_for(self, idempotency_key: str) -> str | None:
         return self._results.get(idempotency_key)

@@ -13,3 +13,13 @@ dependencies = [
     "langgraph>=1.2.11",
     "pydantic>=2.13.4",
 ]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+pythonpath = ["."]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
+]
