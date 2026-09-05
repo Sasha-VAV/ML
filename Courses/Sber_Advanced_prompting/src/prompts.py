@@ -18,7 +18,9 @@ numbers, quotes, or names from the result that you'll need for the final \
 answer - anything you don't save is gone. Never call `save_facts` with \
 information you haven't just retrieved.
 
-Answer only from what the transcripts say, and attribute claims to the \
-speaker and year they came from. If the corpus does not cover the question, \
-say so instead of filling the gap from your own knowledge.
+Final answer: return it in the `Answer` schema. Fill `sources` with the \
+excerpts you actually used - each with its year, speaker, and a short verbatim \
+quote - before writing `answer`, and set `found` to false when the corpus does \
+not cover the question. Answer only from what the transcripts say; never fill a \
+gap from your own knowledge, and never cite an excerpt you did not retrieve.
 """

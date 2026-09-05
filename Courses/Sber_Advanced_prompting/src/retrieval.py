@@ -16,11 +16,21 @@ from src.models import Embedder
 
 @dataclass
 class Document:
+    """One transcript file: its filename and full text."""
+
     name: str
     content: str
 
 
 def load_data(path: Path) -> list[Document]:
+    """Reads every transcript file in a directory.
+
+    Args:
+        path: Directory holding the SPIEF `.txt` transcripts.
+
+    Returns:
+        One `Document` per file.
+    """
     res: list[Document] = []
     for file in os.listdir(path):
         with open(path / file, "r", encoding="utf-8") as f:
@@ -37,6 +47,8 @@ FACET_FIELDS: tuple[str, ...] = get_args(FacetField)
 
 @dataclass
 class RetrievalChunk:
+    """A single speaker turn, the unit that gets indexed and retrieved."""
+
     id: str
     year: int
     meeting: str
@@ -46,6 +58,17 @@ class RetrievalChunk:
 
 
 def from_document(document: Document) -> list[RetrievalChunk]:
+    """Splits a transcript into per-speaker chunks.
+
+    Metadata (year, meeting, topic) is parsed from the filename; the speaker
+    and text come from each `timing | speaker | content` line.
+
+    Args:
+        document: The transcript to split.
+
+    Returns:
+        One chunk per speaker turn.
+    """
     _, year, _, _, meeting, topic, *_ = document.name.split("_")
     year = int(year)
     topic = topic.replace(".txt", "")
@@ -67,6 +90,12 @@ def from_document(document: Document) -> list[RetrievalChunk]:
 
 
 class Retrieval:
+    """Hybrid search over the SPIEF transcripts, backed by Qdrant.
+
+    Combines dense vectors with a Russian BM25 sparse index, fusing the two
+    with Reciprocal Rank Fusion so both semantic and lexical matches count.
+    """
+
     def __init__(self, settings: QdrantSettings, embedder: Embedder):
         self.client = AsyncQdrantClient(host=settings.host, port=settings.port)
         self.settings = settings
@@ -74,6 +103,11 @@ class Retrieval:
         self.sparse_text_embedding_ru: SparseTextEmbedding | None = None
 
     async def start(self, data: list[Document]):
+        """Prepares the sparse index and populates Qdrant if it is empty.
+
+        Args:
+            data: Transcripts to index.
+        """
         avg_doc_length = await asyncio.to_thread(self.get_avg_document_length, data)
         print(f"Average document length: {avg_doc_length}")
         self.sparse_text_embedding_ru = SparseTextEmbedding(
@@ -108,6 +142,14 @@ class Retrieval:
 
 
     def get_avg_document_length(self, data: list[Document]) -> float:
+        """Computes mean chunk length in tokens, needed for BM25 scoring.
+
+        Args:
+            data: Transcripts to measure.
+
+        Returns:
+            Average number of BM25 tokens per chunk.
+        """
         bm25 = SparseTextEmbedding("Qdrant/bm25", language="russian")
         lens = [
             len(next(bm25.embed([chunk.content])).indices)  # type: ignore
@@ -170,6 +212,7 @@ class Retrieval:
             chunks.extend(from_document(document))
 
         async def process_batch(batch: list[RetrievalChunk]):
+            """Embeds one batch of chunks and upserts it into Qdrant."""
             embedded = await asyncio.gather(
                 *[self.embedder.embed([chunk.content]) for chunk in batch]
             )
@@ -215,12 +258,26 @@ class Retrieval:
         topic: str | None = None,
         speaker: str | None = None,
     ) -> str:
+        """Runs hybrid search and returns the best-matching chunks.
+
+        Args:
+            queries: Search queries; their results are fused together.
+            top_k: Maximum chunks to return overall, capped at 10.
+            year: Restrict to this year, if given.
+            meeting: Restrict to this meeting, if given.
+            topic: Restrict to this topic, if given.
+            speaker: Restrict to this speaker, if given.
+
+        Returns:
+            JSON array of matching chunks with their metadata.
+        """
         top_k = min(top_k, 10)
         flt = self._build_filter(
             year=year, meeting=meeting, topic=topic, speaker=speaker
         )
 
         async def embed_query(query: str):
+            """Builds the dense and sparse vectors for one query."""
             dense_vector = await self.embedder.embed([query])
             sparse_vector = await asyncio.to_thread(lambda: list(self.sparse_text_embedding_ru.query_embed([query])))  # type: ignore
             return dense_vector[0], sparse_vector[0]

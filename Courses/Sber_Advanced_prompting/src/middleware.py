@@ -33,6 +33,15 @@ class EvidenceMiddleware(AgentMiddleware[EvidenceState]):
     state_schema = EvidenceState
 
     def before_model(self, state: EvidenceState, runtime: Any) -> dict[str, Any] | None:
+        """Replaces aged-out raw retrieval results with a short placeholder.
+
+        Args:
+            state: Current agent state.
+            runtime: LangGraph runtime (unused).
+
+        Returns:
+            A message update, or None when nothing needed dropping.
+        """
         messages = state["messages"]
 
         round_idx = 0
@@ -67,6 +76,15 @@ class EvidenceMiddleware(AgentMiddleware[EvidenceState]):
         request: ModelRequest,
         handler: Callable[[ModelRequest], ModelResponse],
     ) -> ModelResponse:
+        """Prepends a digest of saved facts to every model call.
+
+        Args:
+            request: The outgoing model request.
+            handler: Next handler in the middleware chain.
+
+        Returns:
+            The model response produced by the handler.
+        """
         evidence = request.state.get("evidence", [])
         if not evidence:
             return await handler(request)

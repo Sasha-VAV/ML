@@ -15,6 +15,7 @@ from src.models import Embedder
 
 
 async def main():
+    """Runs the interactive question-answering REPL over the SPIEF corpus."""
     load_dotenv()
     settings = Settings()
 
@@ -49,8 +50,14 @@ async def main():
                 config=config,
                 context=context,
             )
+        answer = result["structured_response"]
         print("=" * 40)
-        print(f"\n\nAgent: {result['messages'][-1].content}")
+        print(f"\nAgent: {answer.answer}\n")
+        if answer.sources:
+            print("Sources:")
+            for source in answer.sources:
+                print(f"  - {source.speaker} ({source.year}): {source.quote}")
+        print()
 
 
 if __name__ == "__main__":

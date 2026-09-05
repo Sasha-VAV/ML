@@ -224,4 +224,6 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-**draft**
+**draft**gpt2giga.log
+
+# Evaluation output is a deliverable; keep it tracked.

@@ -6,11 +6,25 @@ from src.config import EmbedderSettings
 
 
 class Embedder:
+    """Client for the external dense-embedding service.
+
+    Concurrency is capped with a semaphore so bulk indexing cannot overwhelm
+    the endpoint.
+    """
+
     def __init__(self, settings: EmbedderSettings):
         self.settings = settings
         self.semaphore = asyncio.Semaphore(8)  # Limit concurrent requests to 8
 
     async def embed(self, texts: list[str]) -> list[list[float]]:
+        """Embeds texts, waiting for a free concurrency slot.
+
+        Args:
+            texts: Texts to embed.
+
+        Returns:
+            One dense vector per input text.
+        """
         async with self.semaphore:
             while True:
                 try:

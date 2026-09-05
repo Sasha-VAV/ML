@@ -1,11 +1,12 @@
-import asyncio
 import uuid
 
-from pydantic import BaseModel, Field
 from langchain.chat_models import BaseChatModel
+from langchain_core.callbacks import UsageMetadataCallbackHandler
+from pydantic import BaseModel, Field
 
 from src.agent import get_agent
 from src.context import AgentContext
+from src.schemas import Answer
 
 
 class Verdict(BaseModel):
@@ -45,19 +46,54 @@ Assistant's answer:
 async def judge_answer(
     model: BaseChatModel, question: str, reference: str, answer: str
 ) -> Verdict:
-    """Scores a single answer against its reference."""
+    """Scores a single answer against its reference answer.
+
+    Args:
+        model: Chat model used as the judge.
+        question: The golden-set question.
+        reference: The golden-set reference answer.
+        answer: The answer produced by the pipeline.
+
+    Returns:
+        A `Verdict` with the judge's reasoning and its pass/fail decision.
+    """
     judge = model.with_structured_output(Verdict)
     return await judge.ainvoke(
         JUDGE_PROMPT.format(question=question, reference=reference, answer=answer)
     )
 
 
-async def answer_question(model: BaseChatModel, context: AgentContext, question: str) -> str:
-    """Runs the agent on one question in its own thread."""
+async def answer_question(
+    model: BaseChatModel, context: AgentContext, question: str
+) -> tuple[Answer | None, dict[str, int]]:
+    """Runs the pipeline on one question in its own conversation thread.
+
+    Token usage is captured per question so pipeline cost can be reported
+    separately from the judge's own consumption.
+
+    Args:
+        model: Chat model backing the agent.
+        context: Runtime dependencies (the Qdrant-backed retriever).
+        question: The question to answer.
+
+    Returns:
+        The structured `Answer` (None if the model returned none) and a dict of
+        `input_tokens` / `output_tokens` / `total_tokens` spent answering it.
+    """
+    usage_handler = UsageMetadataCallbackHandler()
     agent = get_agent(model)
     result = await agent.ainvoke(
         {"messages": [{"role": "user", "content": question}]},
-        config={"configurable": {"thread_id": str(uuid.uuid4())}},
+        config={
+            "configurable": {"thread_id": str(uuid.uuid4())},
+            "callbacks": [usage_handler],
+        },
         context=context,
     )
-    return result["messages"][-1].content
+
+    totals = {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0}
+    for per_model in usage_handler.usage_metadata.values():
+        for key in totals:
+            totals[key] += per_model.get(key, 0)
+
+    return result.get("structured_response"), totals
