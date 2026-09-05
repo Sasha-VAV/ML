@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python Debugger: uv",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "draft",
+            "python": "uv",
+            "args": [],
+            "jinja": true,
+            "pythonArgs": [
+                "run",
+                "python"
+            ],
+            "console": "integratedTerminal"
+        }
+    ]
+}
