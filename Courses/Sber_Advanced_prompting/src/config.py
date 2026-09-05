@@ -6,6 +6,7 @@ class QdrantSettings(BaseSettings):
     port: int = 6333
     collection_name: str = "spief"
 
+
 class EmbedderSettings(BaseSettings):
     endpoint: str = "http://212.109.220.252:8023/api/v1/embedder/predict"
 

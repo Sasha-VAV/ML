@@ -1,0 +1,20 @@
+[project]
+name = "sber-advanced-prompting"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "aiohttp>=3.14.3",
+    "asyncio>=4.0.0",
+    "dotenv>=0.9.9",
+    "fastembed>=0.8.0",
+    "fastexcel>=0.21.0",
+    "langchain>=1.3.18",
+    "langchain-openai>=1.6.0",
+    "langfuse>=4.15.1",
+    "polars>=1.44.1",
+    "pydantic>=2.13.5",
+    "pydantic-settings>=2.15.0",
+    "qdrant-client>=1.19.0",
+]

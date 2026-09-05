@@ -16,10 +16,10 @@ async def get_tags(
 
     Args:
         year (int): The year of the SPIEF event
-    
+
     Returns:
         list[str]: A list of tags associated with the SPIEF event for the given year.
-    
+
     Example:
         >>> tags = await get_tags(2010)
         >>> print(tags)
@@ -74,7 +74,9 @@ def save_facts(
         update={
             "evidence": entries,
             "messages": [
-                ToolMessage(content=f"Saved {len(facts)} fact(s).", tool_call_id=tool_call_id)
+                ToolMessage(
+                    content=f"Saved {len(facts)} fact(s).", tool_call_id=tool_call_id
+                )
             ],
         }
     )
