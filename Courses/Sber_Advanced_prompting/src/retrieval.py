@@ -2,6 +2,7 @@ import json
 import asyncio
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Literal, get_args
 import os
 import uuid
 
@@ -26,6 +27,12 @@ def load_data(path: Path) -> list[Document]:
             content = f.read()
             res.append(Document(name=file, content=content))
     return res
+
+
+# Payload fields that carry a keyword/integer index in Qdrant, and are therefore
+# both filterable and facetable. `content` is a TEXT index: searchable, not facetable.
+FacetField = Literal["year", "meeting", "topic", "speaker"]
+FACET_FIELDS: tuple[str, ...] = get_args(FacetField)
 
 
 @dataclass
@@ -66,19 +73,39 @@ class Retrieval:
         self.embedder = embedder
         self.sparse_text_embedding_ru: SparseTextEmbedding | None = None
 
-    def start(self, data: list[Document]):
-        get_avg_doc_length = self.get_avg_document_length(data)
-        print(f"Average document length: {get_avg_doc_length}")
+    async def start(self, data: list[Document]):
+        avg_doc_length = await asyncio.to_thread(self.get_avg_document_length, data)
+        print(f"Average document length: {avg_doc_length}")
         self.sparse_text_embedding_ru = SparseTextEmbedding(
-            "Qdrant/bm25", language="russian", avg_doc_length=get_avg_doc_length
+            "Qdrant/bm25", language="russian", avg_doc_length=avg_doc_length
         )
 
-        if not asyncio.run(
-            self.client.collection_exists(self.settings.collection_name)
-        ):
-            asyncio.run(self._create_collection(self.settings.collection_name))
-        if asyncio.run(self.client.count(self.settings.collection_name)).count == 0:
-            asyncio.run(self._populate_collection(self.settings.collection_name, data))
+        if not await self.client.collection_exists(self.settings.collection_name):
+            await self._create_collection(self.settings.collection_name)
+        if (await self.client.count(self.settings.collection_name)).count == 0:
+            await self._populate_collection(self.settings.collection_name, data)
+
+    def _build_filter(
+        self,
+        *,
+        year: int | None = None,
+        meeting: str | None = None,
+        topic: str | None = None,
+        speaker: str | None = None,
+    ) -> models.Filter | None:
+        """Builds a conjunctive payload filter, skipping the fields left unset."""
+        conditions = [
+            models.FieldCondition(key=key, match=models.MatchValue(value=value))
+            for key, value in (
+                ("year", year),
+                ("meeting", meeting),
+                ("topic", topic),
+                ("speaker", speaker),
+            )
+            if value is not None
+        ]
+        return models.Filter(must=conditions) if conditions else None
+
 
     def get_avg_document_length(self, data: list[Document]) -> float:
         bm25 = SparseTextEmbedding("Qdrant/bm25", language="russian")
@@ -189,29 +216,9 @@ class Retrieval:
         speaker: str | None = None,
     ) -> str:
         top_k = min(top_k, 10)
-        must_have_filters = []
-        if year is not None:
-            must_have_filters.append(
-                models.FieldCondition(key="year", match=models.MatchValue(value=year))
-            )
-        if meeting is not None:
-            must_have_filters.append(
-                models.FieldCondition(
-                    key="meeting", match=models.MatchValue(value=meeting)
-                )
-            )
-        if topic is not None:
-            must_have_filters.append(
-                models.FieldCondition(key="topic", match=models.MatchValue(value=topic))
-            )
-        if speaker is not None:
-            must_have_filters.append(
-                models.FieldCondition(
-                    key="speaker", match=models.MatchValue(value=speaker)
-                )
-            )
-
-        flt = models.Filter(must=must_have_filters) if must_have_filters else None
+        flt = self._build_filter(
+            year=year, meeting=meeting, topic=topic, speaker=speaker
+        )
 
         async def embed_query(query: str):
             dense_vector = await self.embedder.embed([query])
@@ -244,39 +251,37 @@ class Retrieval:
         )
         return json.dumps([chunk.payload for chunk in chunks.points], indent=2, ensure_ascii=False) 
 
-    async def discover(self, target: str, year: int | None = None,
-            meeting: str | None = None,
-            topic: str | None = None,
-            speaker: str | None = None,) -> list[str]:
+    async def discover(
+        self,
+        field: FacetField,
+        *,
+        year: int | None = None,
+        meeting: str | None = None,
+        topic: str | None = None,
+        speaker: str | None = None,
+        limit: int = 100,
+    ) -> list[dict[str, object]]:
+        """Lists the distinct values of one indexed payload field, with hit counts.
 
-        must_have_filters = []
-        if year is not None:
-            must_have_filters.append(
-                models.FieldCondition(key="year", match=models.MatchValue(value=year))
+        Used to ground filter arguments before searching: the caller can look up
+        which years, meetings, topics or speakers actually exist (optionally
+        within a narrower slice) instead of guessing a value that matches nothing.
+        """
+        if field not in FACET_FIELDS:
+            raise ValueError(
+                f"{field!r} is not facetable; expected one of {FACET_FIELDS}"
             )
-        if meeting is not None:
-            must_have_filters.append(
-                models.FieldCondition(
-                    key="meeting", match=models.MatchValue(value=meeting)
-                )
-            )
-        if topic is not None:
-            must_have_filters.append(
-                models.FieldCondition(key="topic", match=models.MatchValue(value=topic))
-            )
-        if speaker is not None:
-            must_have_filters.append(
-                models.FieldCondition(
-                    key="speaker", match=models.MatchValue(value=speaker)
-                )
-            )
-        flt = models.Filter(must=must_have_filters) if must_have_filters else None
+
+        flt = self._build_filter(
+            year=year, meeting=meeting, topic=topic, speaker=speaker
+        )
 
         resp = await self.client.facet(
             collection_name=self.settings.collection_name,
-            key=target,
+            key=field,
             facet_filter=flt,
-            limit=100,
+            limit=limit,
+            exact=True,
         )
 
-        return [str(item.value) for item in resp.hits]
+        return [{"value": hit.value, "count": hit.count} for hit in resp.hits]

@@ -12,7 +12,13 @@ class Embedder:
 
     async def embed(self, texts: list[str]) -> list[list[float]]:
         async with self.semaphore:
-            return await self._embed(texts)
+            while True:
+                try:
+                    return await self._embed(texts)
+                except Exception as e:
+                    print(f"Error during embedding: {e}. Retrying in 5 seconds...")
+                    await asyncio.sleep(5)
+            
 
     async def _embed(self, texts: list[str]) -> list[list[float]]:
         async with aiohttp.ClientSession() as session:
